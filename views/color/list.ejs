@@ -1,0 +1,184 @@
+<%- include('../inc/top') %>
+    <div class="container-fluid">
+        <% if (message === 'Thêm thành công' || message === 'Cập nhật thành công' || message === 'Xóa thành công') { %>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thông báo!',
+                    text: '<%= message %>',
+                  
+                });
+            </script>
+        <% } %>
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <form method="POST" action="/color/add">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" style="color: rgb(32, 39, 226);" id="staticBackdropLabel">
+                                Thêm màu sắc
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="floatingInput" placeholder="Fullname"
+                                    required name="name">
+                                <label for="floatingInput">Tên màu</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="floatingInput" placeholder="Fullname"
+                                    required name="codecolor" value="#">
+                                <label for="floatingInput">Mã màu</label>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row p-4 m-5  shadowpro" >
+            <div class="d-flex justify-content-end ">
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"> <i class="fa-solid fa-plus" style="color: #ffffff;"></i> Thêm màu
+                    sắc</button>
+            </div>
+            <table id="example" class="table table-hover"
+                style="width:95%;margin-left: 25px;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên màu sắc</th>
+                        <th>Mã màu </th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <% if (listColor.length===0) { %>
+                    <tr>
+                        <td colspan="7" style="text-align: center;justify-content: center;">
+                            <p>Dữ liệu không tồn tại.</p>
+                        </td>
+                    </tr>
+                    <% } else { %>
+                        <% for (let i=0; i < listColor.length; i++) { %>
+                            <% const row=listColor[i]; %>
+                                <tr style="height: 100px;">
+                                    <td style="width: 60px;">
+                                        <%= i+1 %>
+
+                                    </td>
+                                    <td style="width: 300px;">
+                                        <%= row.name %>
+                                    </td>
+                                   
+                                    <td style="width: 300px;">
+                                        <div style=" display: flex; align-items: center;">
+                                            <div style="width: 35px; height: 35px;margin-right: 20px ; border-radius: 50%; background-color: <%=row.colorcode %>; "></div>
+                                            <div>
+                                                     <%=row.colorcode %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="width: 190px;">
+
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdropp<%=  row._id  %>">
+                                            <i class="fa-solid fa-trash-can"></i> Xóa
+                                        </button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="staticBackdropp<%=  row._id  %>" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Thông báo
+                                                        </h5>
+
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bạn có muốn xóa <%= row.name %> ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Hủy</button>
+                                                        <a href="/color/delete/<%= row._id %>"
+                                                            class="btn btn-danger">Lưu thay đổi</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Sửa -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdropp1<%=  row._id  %>">
+                                            <i class="fa-regular fa-pen-to-square"></i> Sửa
+                                        </button>
+                                        <div class="modal fade" id="staticBackdropp1<%=  row._id  %>"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="POST" action="/color/update/<%=  row._id  %>">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Sửa sản
+                                                                phẩm
+                                                            </h5>
+
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-floating mb-2">
+                                                                <input name="nameColor" type="text" class="form-control"
+                                                                    id="floatingInput" placeholder="" required
+                                                                    value="<%=  row.name  %>">
+                                                                <label for="floatingInput">Tên màu sắc</label>
+
+                                                                <label for="floatingInput"></label>
+                                                            </div>
+                                                            <div class="form-floating mb-2">
+                                                                <input name="codecolor" type="text" class="form-control"
+                                                                    id="floatingInput" placeholder="" required
+                                                                    value=" <%=row.colorcode %>">
+                                                                <label for="floatingInput">Mã màu</label>
+
+                                                                <label for="floatingInput"></label>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Hủy</button>
+                                                            <button type="submit" class="btn btn-primary">Lưu thay
+                                                                đổi</button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                    <% } %>
+
+
+            </table>
+        </div>
+
+
+
+
+
+    </div>
+
+    <%- include('../inc/bottom') %>

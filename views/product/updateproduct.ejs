@@ -1,0 +1,119 @@
+<%- include('../inc/top') %>
+
+    <style>
+        .borderupdate {
+            background-color: white;
+            border-radius: 13px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+            width: 98%;
+            padding: 80px;
+        }
+    </style>
+    <div class="container-fluid ">
+        <form method="POST" action="/product/updateproduct/<%= itemedit?.id %>" enctype="multipart/form-data" multiple>
+            <div class="container-fluid borderupdate">
+                <div class="modal-body ">
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Fullname" required
+                            name="name" value="<%= itemedit?.name %>">
+                        <label for="floatingInput">Tên sản phẩm</label>
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        <div class="form-floating mb-2">
+                            <select name="category" class="form-select" id="filterGroup1">
+                                <% listCategory.forEach(category=> { %>
+                                    <option value="<%= category?._id %>"
+                                        <%=itemedit?.category_id.toString()===category?._id.toString() ? 'selected' : ''
+                                        %>>
+                                        <%= category?.name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Fullname" required
+                            name="description" value="<%= itemedit?.description %>">
+                        <label for="floatingInput">Mô tả</label>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <p>Ảnh sản phẩm :</p>
+                        <% itemedit?.image .forEach(element=> {%>
+                            <img src="<%=element%>" alt="Hình ảnh" width="120px" height="120px">
+                            <% }); %>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="inputGroupFile02" name="image" multiple
+                            accept="image/*" onchange="checkFileCount(this)">
+                        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                    </div>
+
+                    <script>
+                        function checkFileCount(input) {
+                            const maxFiles = 5; // Số lượng tệp tối đa cho phép
+
+                            if (input.files && input.files.length > maxFiles) {
+                                alert(`Vui lòng chọn tối đa ${maxFiles} ảnh.`);
+                                // Đặt giá trị input về rỗng để loại bỏ các tệp vừa chọn
+                                input.value = "";
+                            }
+                        }
+
+
+
+
+
+                        function validatePrice(input) {
+                            const sanitizedValue = input.value.replace(/[^\d]/g, "");
+
+                            input.value = sanitizedValue;
+
+                            // Kiểm tra nếu đang nhập giá giảm
+                            if (input.name === "discount") {
+                                const originalPriceInput = document.getElementById("inputprice");
+                                const originalPrice = parseFloat(originalPriceInput.value);
+                                const discountedPrice = parseFloat(input.value);
+                                console.log("discountedPrice", discountedPrice);
+                                console.log("originalPrice", originalPrice);
+                                // Kiểm tra nếu giá giảm lớn hơn giá gốc, thiết lập lại giá giảm
+                                if (discountedPrice >= originalPrice) {
+                                    alert("Số tiền giảm giá không được lớn hơn hoặc bằng giá gốc.");
+                                    input.value = "";
+                                }
+                            }
+                        }
+
+                    </script>
+
+
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" id="inputprice" placeholder="Fullname" required
+                            name="price" onchange="validatePrice(this)" value="<%= itemedit?.price %>">
+                        <label for="inputprice">Giá</label>
+                    </div>
+                    <div class=" ">
+                        <div class="form-floating mb-2">
+                            <input type="number" value="<%= itemedit?.discount %>" class="form-control"
+                                placeholder="Số tiền giảm giá" name="discount" onchange="validatePrice(this)">
+                            <label for="discountInput">Số tiền giảm giá</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end m-2">
+                    <button type="submit" class="btn btn-primary p-2 m-2 " style="width: 120px;">Submit</button>
+                    <button type="reset" class="btn btn-secondary p-2 m-2" style="width: 100px;">Cancel</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+    <%- include('../inc/bottom') %>

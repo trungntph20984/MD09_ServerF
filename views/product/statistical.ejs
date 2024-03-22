@@ -1,0 +1,119 @@
+<%- include('../inc/top') %>
+<!DOCTYPE html>
+<html lang="en">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            display: none; /* Ẩn form ban đầu */
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        input, textarea {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="file"] {
+            border: none;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .add-product-btn {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    </style>
+
+
+    <button type="button" class="btn btn-primary btn-sm add-product-btn" onclick="toggleForm()">
+        <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+        Thêm sản phẩm
+    </button>
+
+    <form id="productForm">
+        <h2>Thêm Sản Phẩm</h2>
+
+        <!-- Tên sản phẩm -->
+        <label for="productName">Tên sản phẩm:</label>
+        <input type="text" id="productName" name="productName" placeholder="Nhập tên sản phẩm">
+
+        <!-- Thể loại -->
+        <label for="category">Thể loại:</label>
+        <!-- Dropdown hoặc input cho việc chọn thể loại -->
+
+        <!-- Mô tả -->
+        <label for="description">Mô tả:</label>
+        <textarea id="description" name="description" placeholder="Nhập mô tả"></textarea>
+
+        <!-- Chọn ảnh -->
+        <label for="images">Chọn ảnh:</label>
+        <input type="file" id="images" name="images" multiple>
+
+        <!-- Giá bán -->
+        <label for="price">Giá bán:</label>
+        <input type="text" id="price" name="price" placeholder="Nhập giá bán">
+
+        <!-- Giá giảm -->
+        <label for="discountPrice">Giá giảm:</label>
+        <input type="text" name="discountPrice" placeholder="Nhập giá giảm">
+
+        <!-- Nút thêm sản phẩm -->
+        <button type="submit">Thêm Sản Phẩm</button>
+    </form>
+
+    <script>
+          function toggleForm() {
+            var form = $("#productForm");
+            form.fadeToggle(500); // Hiệu ứng fadeToggle
+        }
+    </script>
+
+</body>
+
+
+
+  <%- include('../inc/bottom') %>

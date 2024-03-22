@@ -1,0 +1,89 @@
+<%- include('../inc/top') %>
+<div class="p-3 p-sm-5">
+    <h2 class="text-center">
+        <%= title %>
+    </h2>
+    <!-- Thêm sản phẩm -->
+    <div class="row mb-5">
+        <div class="col-2"></div>
+        <div class="col-8 card mt-4 boderCard">
+            <div class="text-center mt-4">
+                <% if(msg == "Thêm thành công"){ %>
+                    <p style="color: green; font-style: italic; font-size: 16px;">
+                        <%= msg %>
+                    </p>
+                <% }else{ %>
+                    <p style="color: red; font-style: italic; font-size: 16px;">
+                        <%= msg %>
+                    </p>
+                <% } %>
+            </div>
+            <form class="p-5" action="" method="post" enctype="multipart/form-data">
+                <div class="row mb-3">
+                    <!--image -->
+                    <div class="col-1"></div>
+                    <div class="col-10">
+                        <div class="input-group boderBtn rounded-2">
+                            <input name="img-avata" type="file" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-1"></div>
+                    <!-- tài khoản -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="text" class="form-control boderBtn rounded-2" id="floatingInput" name="username"
+                            placeholder="username" required>
+                        <label class="ms-3" for="floatingInput">Nhập tài khoản</label>
+                    </div>
+                    <div class="col-1"></div>
+                    <!-- full name -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="text" class="form-control boderBtn rounded-2" id="floatingInput" name="fullName"
+                            placeholder="fullName" required>
+                        <label class="ms-3" for="floatingInput">Nhập họ và tên</label>
+                    </div>
+                    <div class="col-1"></div>
+                    <!-- số điện thoại -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="text" class="form-control boderBtn rounded-2" id="floatingInput" name="phoneNumber"
+                            placeholder="phoneNumber" required>
+                        <label class="ms-3" for="floatingInput">Nhập số điện thoại</label>
+                    </div>
+                    <div class="col-1"></div>
+                    <!-- dia chi -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="text" class="form-control boderBtn rounded-2" id="floatingInput" name="address"
+                            placeholder="address" required>
+                        <label class="ms-3" for="floatingInput">Nhập địa chỉ</label>
+                    </div>
+                    <div class="col-1"></div>
+                    <!--mật khẩu -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="password" class="form-control boderBtn rounded-2" id="floatingInput" name="password" 
+                        placeholder="password" required>
+                        <label class="ms-3" for="floatingInput">Nhập mật khẩu</label>
+                    </div>
+                    <div class="col-1"></div>
+                    <!-- nhập lại mật khẩu -->
+                    <div class="col-1"></div>
+                    <div class="col-10 form-floating mt-2">
+                        <input type="password" class="form-control boderBtn rounded-2" id="floatingInput" name="rePassword" 
+                        placeholder="rePassword" required>
+                        <label class="ms-3" for="floatingInput">Nhập lại mật khẩu</label>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button type="submit" class=" btnCustem"
+                        style="width: 200px; height: 48px; font-size: 24px; font-weight: 500;">Save</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+<%- include('../inc/bottom') %>

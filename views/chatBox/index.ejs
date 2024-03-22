@@ -1,0 +1,581 @@
+<%- include('../inc/top') %>
+    <style>
+        /* Sử dụng thuộc tính border-radius trong CSS */
+        .rounded-header {
+            border-radius: 10px;
+        }
+
+        .rounded-messages {
+            border-radius: 10px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 10px;
+        }
+
+        .message p {
+            background-color: rgb(211, 211, 211);
+            color: rgb(28, 28, 28);
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message span {
+            font-size: 12px;
+            color: gray;
+            margin-left: 10px;
+        }
+
+        /* Tạo kiểu cho bong bóng tin nhắn bên phải */
+        .message-right {
+            align-items: flex-end;
+        }
+
+        .message-right p {
+            background-color: #d9efc2;
+            color: rgb(28, 28, 28);
+        }
+
+        .message-right span {
+            margin-right: 10px;
+        }
+
+        .selected-conversation {
+            background-color: #d9ebff;
+            color: #0b0b0b;
+        }
+
+        #conversationList {
+            max-height: 600px;
+            /* Đặt chiều cao tối đa của thẻ ul */
+            overflow-y: auto;
+            /* Tự động thêm thanh cuộn khi cần */
+        }
+
+        /* Kích thước và kiểu dáng cho thẻ li bên trong */
+        #conversationList li {
+            padding: 10px;
+        }
+
+        /* Cố định kích thước của các phần tử con trong thẻ li */
+        .conversation-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-container img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            padding: 0;
+        }
+
+        .user-info p {
+            margin: 0;
+        }
+    </style>
+
+    <meta id="idsender" content="<%= idsender %>">
+    <!-- ... -->
+
+    <div style="display: flex; height: 80vh;">
+        <!-- Danh sách cuộc trò chuyện (25%) -->
+        <div style="width: 25%; border-right: 1px solid #ccc; padding: 10px;">
+            <h2>Danh Sách Khách Hàng</h2>
+            <ul id="conversationList" class="list-group">
+                <% conversations.forEach(conversation=> { %>
+                    <li data-conversation-id="<%= conversation._id %>" class="list-group-item">
+                        <% conversation.members.forEach(member=> { %>
+                            <% if (member._id.toString() !==idsender) { %>
+                                <div class="conversation-info">
+                                    <div class="avatar-container">
+                                        <img src="<%= member.avata %>" alt="Avatar"
+                                            class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <div class="user-info">
+                                        <p>
+                                            <%= member.full_name %>
+                                        </p>
+                                        <span>
+                                            <% var date=new Date(conversation.createdAt); %>
+                                                <%= date.toLocaleTimeString('vi-VN', { hour: '2-digit' ,
+                                                    minute: '2-digit' }) %> -
+                                                    <%= date.toLocaleDateString('vi-VN', { day: '2-digit' ,
+                                                        month: '2-digit' , year: '2-digit' }) %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <% }); %>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+
+        <!-- Nội dung tin nhắn (75%) -->
+        <div style=" width: 75%; padding: 10px; display: flex; flex-direction: column;">
+            <!-- Tiêu đề -->
+            <header class="bg-secondary text-white p-3 rounded-header">
+                <h2>Tin Nhắn <span id="mUserTarget"></span> </h2>
+            </header>
+            <!-- Tin nhắn -->
+            <div id="messages" style="flex-grow: 1; overflow-y: scroll;"
+                class="scrollbar scrollbar-primary rounded-messages">
+                <!-- Hiển thị tin nhắn ở đây -->
+                <div class="message">
+                    <p>Duy đẹp trai thế ❤️</p>
+                    <span>00:30 - 06/04/2003</span>
+                </div>
+
+                <div class="message message-right">
+                    <p>Đương nhiên rồi 🥰</p>
+                    <span>06:04 - 23/89/69</span>
+                </div>
+                <div class="message">
+                    <p>Chỉ cách với 👨‍🦯</p>
+                    <span>23:89 - 06/04/2003</span>
+                </div>
+                <div class="message message-right">
+                    <p>Hãy mua quần áo ở Adadas để đẹp trai 😘</p>
+                    <span>06:04 - 23/89/69</span>
+                </div>
+
+            </div>
+            <!--  -->
+            <!-- Nhập và gửi tin nhắn -->
+            <div style="margin-top: 10px; display: flex;">
+                <input class="form-control" type="text" id="messageInput" placeholder="Nhập tin nhắn..."
+                    style="width: 80%;">
+                <input class="form-control" type="file" id="messageImgInput" style="width: 20%;">
+                <button onclick="sendMessage()" class="btn btn-outline-secondary"
+                    style="transition: 0.3s; width: 20%;"><i class="fa fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trong file EJS -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+
+    <script>
+        let socket;
+        let selectedConversationId = null;
+        let currentSocket = null;
+        let currentUser = null;
+        var messages = [];
+        var BASE_API = 'https://adadas.onrender.com';
+        // var BASE_API = 'https://adadas.onrender.com';
+
+        const idSender = document.getElementById('idsender').getAttribute('content');
+        console.log("người gửi", idSender);
+
+
+        // Lấy danh sách các thẻ li và thêm sự kiện click
+        const conversationList = document.getElementById('conversationList');
+        conversationList.addEventListener('click', function (event) {
+            const li = event.target.closest('li');
+            if (li) {
+                //=====
+                const allLiElements = document.querySelectorAll('#conversationList li');
+                allLiElements.forEach(element => {
+                    element.classList.remove('selected-conversation');
+                });
+                li.classList.add('selected-conversation');
+                //=====
+                // Ngắt kết nối socket hiện tại nếu có
+                if (socket) {
+                    socket.off(); // Loại bỏ tất cả các sự kiện
+                    socket.disconnect();
+                }
+
+
+                socket = io();
+                socket.on('message', (data) => {
+                    console.log("nhận " + data + "???" + socket.id);
+
+                    var recipientId = data.recipientId;
+                    var text = data.text;
+                    var createdAt = data.createdAt;
+                    var _id = data._id;
+                    var sender = data.sender;
+                    var conversationId = data.conversationId;
+
+                    console.log('Recipient ID: ' + recipientId);
+                    console.log('text: ' + text);
+                    console.log('Created At: ' + createdAt);
+                    console.log('_ID: ' + _id);
+                    console.log('Sender: ' + sender);
+                    console.log('Conversation ID: ' + conversationId);
+
+
+                    messages.push({
+                        recipientId: recipientId,
+                        text: text,
+                        createdAt: createdAt,
+                        _id: _id,
+                        sender: sender,
+                        conversationId: conversationId
+                    });
+                    //=== hiển thị lên ====
+                    // console.log('Người đang tương tác:', currentUser);
+                    if (sender === currentUser) {
+                        const messagesDiv = document.getElementById('messages');
+
+                        if (text.startsWith('/imgMessage/')) {
+                            // Nếu message.text là URL hình ảnh
+                            var imageUrl = BASE_API + text;
+                            if (sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(createdAt)}</span>
+        </div> `;
+                            }
+                        } else {
+                            // Nếu message.text là văn bản bình thường
+                            if (sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <p>${text}</p><span>${formatDate(createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <p>${text}</p><span>${formatDate(createdAt)}</span>
+        </div> `;
+                            }
+                        }
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                    } else {
+                        console.log('có tin nhắn mới từ người khác' + sender);
+                    }
+
+                });
+
+                socket.on('connect', () => {
+                    console.log('Connected to server:', socket.id);
+                    updateSocketIdForUser(idSender, socket.id);
+                });
+                //======
+
+                const conversationId = li.getAttribute('data-conversation-id');
+                console.log('clicked conversation', conversationId);
+                loadMessages(conversationId);
+                fetchConversationById(conversationId, idSender);
+
+
+            }
+
+        });
+
+
+
+        async function loadMessages(conversationId) {
+
+            selectedConversationId = conversationId;
+
+            try {
+                const response = await fetch(`/api/message/${conversationId}`);
+                const result = await response.json();
+                console.log('get message được gọi');
+
+                if (result.status === 1) {
+                    const messages = result.data;
+
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = '';
+
+                    messages.forEach(message => {
+                        if (message.text.startsWith('/imgMessage/')) {
+                            // Nếu message.text là URL hình ảnh
+                            var imageUrl = BASE_API + message.text;
+                            if (message.sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(message.createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(message.createdAt)}</span>
+        </div> `;
+                            }
+                        } else {
+                            // Nếu message.text là văn bản bình thường
+                            if (message.sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <p>${message.text}</p><span>${formatDate(message.createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <p>${message.text}</p><span>${formatDate(message.createdAt)}</span>
+        </div> `;
+                            }
+                        }
+
+                    });
+                    // messagesDiv.appendChild(messageDiv);
+                } else {
+                    console.error('Error loading messages:', result.msg);
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+            var messagesDiv = document.getElementById('messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+
+        async function sendMessage() {
+            console.log('đã nhấn gửi tin nhắn');
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value;
+            const imageInput = document.getElementById('messageImgInput');
+            const formData = new FormData();
+
+            formData.append('conversationId', selectedConversationId);
+            formData.append('sender', idSender);
+
+
+
+            if (text.trim().length > 0 || imageInput.files.length > 0) {
+                formData.append('text', text);
+
+                if (imageInput.files.length > 0) {
+                    formData.append('text', imageInput.files[0]);
+                }
+
+
+                try {
+                    const response = await fetch('https://adadas.onrender.com/api/message', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    const interactor = await fetchIdSocketCurrent(currentUser);
+                    const result = await response.json();
+
+
+                    //========== SOCKET IO ============
+                    const message = result.data.text;
+                    const _id = result.data._id;
+                    const sender = result.data.sender;
+                    const conversationId = result.data.conversationId;
+                    const createdAt = result.data.createdAt;
+                    const recipientId = interactor.socketId;
+
+                    console.log("id current trong send message ", recipientId);
+                    console.log("text===", message); // tếch người dùng gửi đến current
+                    console.log("createdAt===", createdAt); // tếch người dùng gửi đến current
+
+                    if (recipientId.trim() !== '' &&
+                        message.trim() !== '' &&
+                        createdAt.trim() !== '' &&
+                        _id.trim() !== '' &&
+                        sender.trim() !== '' &&
+                        conversationId.trim() !== '') {
+                        socket.emit('message', { recipientId, message, createdAt, _id, sender, conversationId });
+
+                        console.log("gửi :" + message + "-đến-:" + recipientId);
+
+
+                    } else {
+                        console.error('Recipient ID and message cannot be empty.');
+                    }
+                    //========== SOCKET IO ============
+
+                    if (result.status === 1) {
+                        // console.log(result.data.text);
+                        // console.log(result.data.sender);
+                        // console.log(result.data.createdAt);
+                        const messagesDiv = document.getElementById('messages');
+
+                        if (result.data.text.startsWith('/imgMessage/')) {
+                            // Nếu message.text là URL hình ảnh
+                            var imageUrl = BASE_API + result.data.text;
+                            if (result.data.sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(result.data.createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <img src="${imageUrl}" width="20%" height="20%" style="border-radius: 10px;"><span>${formatDate(result.data.createdAt)}</span>
+        </div> `;
+                            }
+                        } else {
+                            // Nếu message.text là văn bản bình thường
+                            if (result.data.sender !== idSender) {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message">
+          <p>${result.data.text}</p><span>${formatDate(result.data.createdAt)}</span>
+        </div> `;
+                            } else {
+                                messagesDiv.innerHTML +=
+                                    `<div class="message message-right">
+          <p>${result.data.text}</p><span>${formatDate(result.data.createdAt)}</span>
+        </div> `;
+                            }
+                        }
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        messageInput.value = '';
+                        if (imageInput) imageInput.value = '';
+                    } else {
+                        console.error('Error sending message:', result.msg);
+                    }
+
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                }
+
+            } else {
+            }
+
+
+
+        }
+
+        function formatDate(date) {
+            if (typeof date !== "object" || !(date instanceof Date)) {
+                date = new Date(date);
+            }
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+
+            return `${hours}:${minutes} - ${day}/${month}/${year}`;
+        }
+
+        function delayFunction() {
+            setTimeout(function () {
+                var messagesDiv = document.getElementById('messages');
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                console.log('delay được gọi');
+            }, 500);
+        }
+
+        async function fetchConversationById(conversationId, userId) {
+            try {
+                const response = await fetch(`/api/conversation/r/${conversationId}/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                // Chuyển đổi dữ liệu JSON từ phản hồi
+
+                const data = await response.json();
+                const firstMemberId = data.data.members[0];
+                // Xử lý dữ liệu theo ý muốn
+                currentUser = firstMemberId;
+                console.log('Người đang tương tác:', currentUser);
+                fetchIdSocketCurrent(firstMemberId);
+
+                return firstMemberId;
+            } catch (error) {
+                console.error('Error fetching conversation:', error.message);
+            }
+        }
+
+        async function fetchIdSocketCurrent(currentUserId) {
+            try {
+                const response = await fetch(`/api/userSocketId/${currentUserId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                // Chuyển đổi dữ liệu JSON từ phản hồi
+
+                const data = await response.json();
+                const mCurrentUserId = data.socketId;
+
+                // Xử lý dữ liệu theo ý muốn
+                interactor = mCurrentUserId;
+                console.log('socket id người tương tác:', mCurrentUserId);
+
+
+                return data;
+            } catch (error) {
+                console.error('Error fetching conversation:', error.message);
+            }
+        }
+
+        async function updateSocketIdForUser(userId, socketId) {
+            try {
+                const response = await fetch(`/api/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ socketId }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                } else {
+                    console.log('đã cập nhật socketid:', socketId, " cho người đăng nhập này");
+
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error updating socketId for user:', error.message);
+            }
+        }
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+    <%- include('../inc/bottom') %>

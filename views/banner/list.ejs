@@ -1,0 +1,225 @@
+<%- include('../inc/top') %>
+
+<% if (message === 'Thêm thành công' || message === 'Cập nhật thành công' || message === 'Xóa thành công' ) { %>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thông báo!',
+            text: '<%= message %>',
+
+        });
+    </script>
+<% } %>
+
+
+<div class="row p-3  shadowpro" style="margin-left: 300px;margin-right: 300px;">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+                <form method="POST" action="/banner/add" enctype="multipart/form-data">
+
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" style="color: rgb(32, 39, 226);"
+                            id="staticBackdropLabel">
+                            Thêm Banner
+                        </h1>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-2">
+                            <input name="description" type="text" class="form-control" id="floatingInput"
+                                   placeholder="" required>
+                            <label for="floatingInput"> Mô tả tiêu đề </label>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" id="inputGroupFile02" name="image"
+                                   accept="image/*" required>
+                            <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                        </div>
+                        <select name="id_product" class="form-select" aria-label="Default select example" multiple>
+                      
+                            <% for (const product of listProduct) { %>
+                                <option value="<%= product._id %>">
+                                    <%= product.name %>
+                                </option>
+                            <% } %>
+                        </select>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end ">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"><i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+            Thêm Banner
+        </button>
+    </div>
+    <!-- /////////////////// tableeeeeeeeeeeeeee -->
+    <table id="example" class="table  table-hover " style="width:100%;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th> Tên sản phẩm</th>
+            <th>Tiêu đề</th>
+            <th>Ảnh</th>
+            <th>Thao tác</th>
+
+        </tr>
+        </thead>
+
+        <% if (listtBanner.length === 0) { %>
+            <tr>
+                <td colspan="7" style="text-align: center;justify-content: center;">
+                    <p>Dữ liệu không tồn tại.</p>
+                </td>
+            </tr>
+        <% } else { %>
+
+            <% for (let i = 0; i < listtBanner.length; i++) { %>
+                <% const row = listtBanner[i]; %>
+                <tr>
+                    <td>
+                        <%= i + 1 %>
+                    </td>
+                    <td style="width: 550px;">
+                        <% if (row?.product_id && row.product_id.length > 0) { %>
+                          <% row.product_id.forEach(product => { %>
+                            <%= product.name %><br>
+                          <% }); %>
+                        <% } else { %>
+                          Không có sản phẩm
+                        <% } %>
+                      </td>
+                      
+                    <td style="width: 550px;">
+                        <%= row?.description %>
+                    </td>
+
+                    <td>
+                        <img style="width: 150px;height: 150px;" src="  <%= row.image_banner %>"
+                             alt="">
+                    </td>
+
+                    <td>
+                        <div class="d-flex">
+                            <!-- model xóa -->
+                            <div class="me-1">
+
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdroppp<%= row._id %>">
+                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                </button>
+
+                                <div class="modal fade" id="staticBackdroppp<%= row._id %>"
+                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Thông
+                                                    báo
+                                                </h5>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                Bạn có muốn xóa <%= row.description %> ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Hủy
+                                                </button>
+                                                <a href="/banner/delete/<%= row._id %>" class="btn btn-danger">Lưu thay
+                                                    đổi</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- model sửa -->
+                            <div>
+
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropppp<%= row._id %>">
+                                    <i class="fa-regular fa-pen-to-square"></i> Sửa
+                                </button>
+
+                                <div class="modal fade" id="staticBackdropppp<%= row._id %>"
+                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <form action="/banner/edit/<%= row._id %>" method="post"
+                                              enctype="multipart/form-data">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                        Sửa banner
+                                                    </h5>
+
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="form-floating mb-2">
+                                                        <input value="<%= row.description %>" name="description"
+                                                               type="text" class="form-control" id="floatingInput"
+                                                               placeholder="" required>
+                                                        <label for="floatingInput"> Mô tả tiêu đề </label>
+                                                    </div>
+                                                    <img style="width: 150px;height: 150px;"
+                                                         src="<%= row.image_banner %>" alt="">
+                                                    <div class="input-group mb-3">
+
+                                                        <input type="file" class="form-control" id="inputGroupFile02"
+                                                               name="image"
+                                                               accept="image/*">
+                                                        <label class="input-group-text"
+                                                               for="inputGroupFile02">Upload</label>
+                                                    </div>
+                                                    <select name="id_product" class="form-select" aria-label="Default select example" multiple>
+                                                        <% for (const product of listProduct) { %>
+                                                            <% let isSelected = row.product_id && row.product_id.some(item => item._id.toString() === product._id.toString()); %>
+                                                            <option value="<%= product._id %>" <%= isSelected ? 'selected' : '' %>>
+                                                                <%= product.name %>
+                                                            </option>
+                                                        <% } %>
+                                                    </select>
+                                                    
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Hủy
+                                                    </button>
+                                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+
+
+                </tr>
+            <% } %>
+        <% } %>
+
+    </table>
+
+
+</div>
+
+<%- include('../inc/bottom') %>

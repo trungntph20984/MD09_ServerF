@@ -1,0 +1,170 @@
+<%- include('../inc/top') %>
+
+    <% if (message==='Thêm thành công' ) { %>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thông báo!',
+                text: '<%= message %>',
+            });
+        </script>
+        <% } else if (message==='Cập nhật thành công' ) { %>
+            <script>
+                Swal.fire({
+                    icon: 'question',
+                    title: 'Sản phẩm đã tồn tại',
+                    text: 'Bạn có muốn cập nhật lại số lượng không?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Xử lý khi người dùng chọn Có
+                        // Có thể thêm một modal khác để cập nhật số lượng
+                        $('#updateQuantityModal').modal('show');
+                    }
+                });
+            </script>
+            <% } %>
+
+                <div class="modal fade" id="updateQuantityModal" tabindex="-1"
+                    aria-labelledby="updateQuantityModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateQuantityModalLabel">Cập nhật số lượng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Nội dung modal cập nhật số lượng -->
+                                <form method="post" action="/product_size_color/updateQuantity">
+                                    <div class="mb-3">
+                                        <label for="newQuantity" class="form-label">Số lượng mới:</label>
+                                        <input type="text" class="form-control" id="newQuantity" name="updateQuantity"
+                                            required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid bgform">
+                    <script>
+                        function validateForm() {
+                            var sizeCheckboxes = document.querySelectorAll('input[name="checksize"]:checked');
+                            var colorCheckboxes = document.querySelectorAll('input[name="checkcolor"]:checked');
+                            var productDropdown = document.querySelector('select[name="name"]');
+                            var quantityInput = document.querySelector('input[name="quantity"]');
+                            if (productDropdown.value === "") {
+                                alert("Vui lòng chọn sản phẩm");
+                                return false;
+                            }
+
+                            if (sizeCheckboxes.length === 0 || colorCheckboxes.length === 0) {
+                                alert("Vui lòng chọn ít nhất một kích cỡ và một màu.");
+                                return false;
+                            }
+
+                            if (quantityInput.value.trim() === "") {
+                                alert("Số lượng không được để trống.");
+                                return false;
+                            }
+                            return true;
+                        }
+                        function queryIdProduct() {
+                            const selectedSize = document.querySelector('input[name="checksize"]:checked');
+                            const selectedProductId = document.getElementsByName("name")[0].value;
+
+                            if (selectedProductId && selectedSize) {
+                                // Thực hiện hành động khi cả hai đều tồn tại
+                                const sizeID = selectedSize.value;
+                                window.location.href = `/product_size_color/add_product_size_color/?productID=${selectedProductId}&sizeID=${sizeID}`;
+                            } else if (selectedProductId) {
+
+                                window.location.href = `/product_size_color/add_product_size_color/?productID=${selectedProductId}`;
+                            } else if (selectedSize) {
+
+                                const sizeID = selectedSize.value;
+                                window.location.href = `/product_size_color/add_product_size_color/?sizeID=${sizeID}`;
+                            }
+                        }
+                    </script>
+                    <div style="display: flex; flex-direction: row;">
+                        <% if (findImage) { %>
+                            <% findImage.forEach(image=> { %>
+                                <div style="margin-left: 27px;">
+                                    <img src="<%= image %>" alt="Hình ảnh" style="width: 150px; height: 150px;">
+                                </div>
+                                <% }); %>
+                                    <% } %>
+                    </div>
+
+
+
+                    <form method="POST" class="m-4" onsubmit="return validateForm()">
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Tên
+                                sản
+                                phẩm</span>
+                            <select name="name" class="form-control form-select"
+                                aria-label="Sizing example input Default select example"
+                                aria-describedby="inputGroup-sizing-lg" onchange="queryIdProduct()">
+                                <option value="" selected>
+                                    Vui lòng chọn sản phẩm
+                                </option>
+
+                                <% product.forEach((product)=> { %>
+                                    <option value="<%= product._id %>" <%=product._id==selectedProductId ? 'selected'
+                                        : '' %>>
+                                        <%=product.name%>
+                                    </option>
+
+                                    <% }); %>
+
+                            </select>
+                        </div>
+
+                        <div class="d-flex align-content-start flex-wrap checkbox-group">             
+                            <% size.forEach((size)=> { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" name="checksize" style="margin-left: 20px;"
+                                        type="radio" value="<%= size.id %>" id="flexCheckDefault_<%= size.name %>"
+                                        onchange="queryIdProduct()" <% if (size.id===selectedSizeID) { %>checked<% } %>>
+                                        <label class="form-check-label" for="flexCheckDefault_<%= size.name %>">
+                                            <%= size.name %>
+                                        </label>
+                                </div>
+                                <% }); %>
+                        </div>
+
+                      
+
+                        <div class="d-flex align-content-start flex-wrap checkbox-group">
+                          
+                            <% color.forEach((color)=> { %>
+                                <input type="checkbox" name="checkcolor" id="Checkbox<%= color.name %>"
+                                    class="btn-checkbox <%= color.name %>" value="<%= color.id %>">
+                                <label for="Checkbox<%= color.name %>" class="checkbox-label"
+                                    style="background-color: <%= color.colorcode += 99 %>;">
+                                    <%= color.name %>
+                                </label>
+                                <% }); %>
+                        </div>
+
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Số
+                                lượng</span>
+                            <input name="quantity" type="number" class="form-control" aria-label="Sizing example input"
+                                aria-describedby="inputGroup-sizing-lg">
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="reset" class="btn btn-secondary "
+                                style="width: 180px; margin-right: 20px; ">Hủy</button>
+                            <button type="submit" class="btn btn-primary " style="width: 250px; ">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <%- include('../inc/bottom') %>

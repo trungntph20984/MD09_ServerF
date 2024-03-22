@@ -1,0 +1,464 @@
+<%- include('../inc/top') %>
+    <div class="container-fluid">
+
+
+        <% if (message==='Thêm thành công' || message==='Cập nhật thành công sản phẩm' || message==='Xóa thành công' ) {
+            %>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thông báo!',
+                    text: '<%= message %>',
+
+                });
+            </script>
+            <% } %>
+
+
+                <!-- tìm kiếm và lọc -->
+                <div class="d-flex  m-4"
+                    style=" background-color: white; border-radius: 13px;  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4); margin: 20px; ">
+                    <form method="get" action="/product/search" class="input-group m-3 d-flex">
+                        <input placeholder="Nhập tên để tìm kiếm sản phẩm ...." aria-label="Search for your product"
+                            type="text" class="form-control" id="floatingInput" name="search">
+                        <div class="d-flex">
+                            <button type="submit" class="input-group-text bg-primary"
+                                style="margin-left: 10px; margin-right: 10px;" for="filterGroup1">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                    viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                    <path
+                                        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                                </svg>
+                            </button>
+                            <select class="form-select" id="filterGroup1" onchange="filterCategory()">
+                                <option value="all" <%=selectedCategoryId==='all' ? 'selected' : '' %>>Tất cả</option>
+                                <% listCategory.forEach(category=> { %>
+                                    <option value="<%= category._id %>" <%=category._id==selectedCategoryId ? 'selected'
+                                        : '' %>
+                                        >
+                                        <%= category.name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                            <script>
+                                function filterCategory() {
+                                    var selectedCategoryId = document.getElementById("filterGroup1").value;
+
+                                    // Kiểm tra nếu giá trị là "all", chuyển hướng đến /product/listproduct/1
+                                    if (selectedCategoryId === 'all') {
+                                        window.location.href = "/product/listproduct/1";
+                                    } else {
+                                        window.location.href = "/product/filterCategory/?category=" + selectedCategoryId;
+                                    }
+                                }
+                            </script>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form method="POST" action="/product/addproduct" enctype="multipart/form-data" multiple>
+                                <script>
+                                    function checkFileCount(input) {
+                                        const maxFiles = 5; // Số lượng tệp tối đa cho phép
+
+                                        if (input.files && input.files.length > maxFiles) {
+                                            alert(`Vui lòng chọn tối đa ${maxFiles} ảnh.`);
+                                            // Đặt giá trị input về rỗng để loại bỏ các tệp vừa chọn
+                                            input.value = "";
+                                        }
+                                    }
+                                    function validatePrice(input) {
+                                        const sanitizedValue = input.value.replace(/[^\d]/g, "");
+                                        input.value = sanitizedValue;
+                                    }
+                                </script>
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" style="color: rgb(32, 39, 226);"
+                                        id="staticBackdropLabel">
+                                        Thêm sản phẩm
+                                    </h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="form-floating mb-2">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                            placeholder="Fullname" required name="name">
+                                        <label for="floatingInput">Tên sản phẩm</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <select name="category" class="form-select form-control" id="filterGroup1">
+                                            <% listCategory.forEach(category=> { %>
+                                                <option value="<%= category._id %>">
+                                                    <%= category.name %>
+                                                </option>
+                                                <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                            placeholder="Fullname" required name="description">
+                                        <label for="floatingInput">Mô tả</label>
+                                    </div>
+
+
+                                    <div class="image-preview" id="imagePreview"></div>
+
+                                    <div class="input-group mb-3">
+                                        <input type="file" class="form-control" id="inputGroupFile02" name="image"
+                                            multiple accept="image/*" onchange="handleFileSelect(this)" required>
+                                        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                    </div>
+
+                                    <script>
+                                        function handleFileSelect(input) {
+
+                                            const maxFiles = 5;
+                                            const imagePreview = document.getElementById("imagePreview");
+                                            const paragraph = document.querySelector("p");
+
+                                            // Xóa nội dung cũ
+                                            imagePreview.innerHTML = "";
+
+                                            if (input.files && input.files.length > maxFiles) {
+                                                alert(`Vui lòng chọn tối đa ${maxFiles} ảnh.`);
+                                                // Đặt giá trị input về rỗng để loại bỏ các tệp vừa chọn
+                                                input.value = "";
+                                            } else {
+                                                // Hiển thị nội dung của thẻ p
+                                                paragraph.style.display = "block";
+
+                                                for (let i = 0; i < input.files.length && i < maxFiles; i++) {
+                                                    const file = input.files[i];
+                                                    const reader = new FileReader();
+
+                                                    reader.onload = function (e) {
+                                                        const img = document.createElement("img");
+                                                        img.src = e.target.result;
+                                                        img.classList.add("preview-image");
+                                                        imagePreview.appendChild(img);
+                                                    };
+
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            }
+                                        }
+                                    </script>
+
+                                    <div class="form-check mb-2 d-flex justify-content-end ">
+                                        <input type="checkbox" class="form-check-input me-2" id="discountCheckbox"
+                                            onchange="toggleDiscountInput()">
+                                        <label class="form-check-label mr-3" for="discountCheckbox">Giảm giá</label>
+                                    </div>
+
+                                    <div class="form-floating mb-2">
+                                        <input type="text" class="form-control" id="inputPrice" placeholder="Fullname"
+                                            required name="price" oninput="validatePrice(this)">
+                                        <label for="inputPrice">Giá</label>
+                                    </div>
+                                    <div>
+                                        <div class="form-floating mb-2" id="discountInputContainer"
+                                            style="display: none;">
+                                            <input type="number" class="form-control" id="discountInput"
+                                                placeholder="Số tiền giảm giá" name="discount"
+                                                onchange="validateDiscount()">
+                                            <label for="discountInput">Số tiền giảm giá</label>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function toggleDiscountInput() {
+                                            var discountInputContainer = document.getElementById('discountInputContainer');
+                                            var discountInput = document.getElementById('discountInput');
+                                            var floatingInput = document.getElementById('inputPrice');
+
+                                            var discountCheckbox = document.getElementById('discountCheckbox');
+
+                                            if (discountCheckbox.checked) {
+
+                                                discountInputContainer.style.display = 'block';
+
+                                            } else {
+
+                                                discountInputContainer.style.display = 'none';
+                                                discountInput.value = '';
+                                            }
+
+                                            validateDiscount();
+                                        }
+
+                                        function validateDiscount() {
+                                            var discountInput = document.getElementById('discountInput');
+                                            var floatingInput = document.getElementById('inputPrice');
+
+                                            var discountValue = parseFloat(discountInput.value) || 0;
+                                            var priceValue = parseFloat(floatingInput.value) || 0;
+                                            console.log("discountValue", discountValue);
+                                            console.log("priceValue", priceValue);
+
+                                            if (discountValue >= priceValue) {
+                                                alert("Số tiền giảm giá không được lớn hơn hoặc bằng giá gốc.");
+                                                discountInput.value = ''; // Reset giảm giá nếu không hợp lệ
+                                            }
+                                        }
+                                    </script>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i
+                                            class="fa-regular fa-circle-xmark"></i> Hủy bỏ</button>
+                                    <button type="submit" class="btn btn-primary"> <i
+                                            class="fa-regular fa-floppy-disk"></i> Lưu
+                                        thông tin</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
+                <style>
+                    /* Thêm vào phần style của bạn hoặc tạo một tệp CSS riêng */
+                    .table-hover tbody tr:hover {
+                        background-color: #f5f5f5;
+                        /* Màu nền khi hover */
+                    }
+                </style>
+
+                <div class="row p-3"
+                    style=" background-color: white; border-radius: 13px;  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4); margin: 20px; ">
+                    <div class="d-flex justify-content-end me-5 m-2 mb-6">
+                        <a href="/product/export" type="button" class="btn btn-success me-3"><i
+                                class="fa-regular fa-file-excel"></i>
+                            Export</a>
+
+                        <button type="button" class="btn btn-primary btn-sm " data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop"> <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+                            Thêm sản
+                            phẩm</button>
+                    </div>
+
+                    <table id="example" class="table  table-hover " style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Thời gian</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Thể loại</th>
+                                <th>Giá
+                                    <span class="sort-icon">
+                                        <a href="/product/sortDown"><i class="fa-solid fa-caret-down"></i></i></a>
+                                        <a href="/product/sortUp"><i class="fa-solid fa-caret-up"></i></a>
+                                    </span>
+                                </th>
+                                <th>Ảnh</th>
+                                <th>Mô tả</th>
+                                <th>Thao tác</th>
+
+                            </tr>
+                        </thead>
+
+                        <% if (listProducts.length===0) { %>
+                            <tr>
+                                <td colspan="7" style="text-align: center;justify-content: center;">
+                                    <p>Dữ liệu không tồn tại.</p>
+                                </td>
+                            </tr>
+                            <% } else { %>
+
+                                <% for (let i=0; i < listProducts.length; i++) { %>
+                                    <% const row=listProducts[i]; %>
+                                        <tr>
+                                            <td style="width: 70px;">
+                                                <%= startCount + i %>
+
+                                            </td>
+                                            <td style="width: 170px;">
+                                                <div>
+                                                    <i class="fa-regular fa-calendar"></i>
+                                                    <%= new Intl.DateTimeFormat('vi-VN', { hour: 'numeric' ,
+                                                        minute: 'numeric' , }).format(new Date(row.createdAt)) %>
+                                                        -
+                                                        <%= new Intl.DateTimeFormat('vi-VN', { day: 'numeric' ,
+                                                            month: 'numeric' , year: 'numeric' , }).format(new
+                                                            Date(row.createdAt)) %>
+
+                                                </div>
+                                                <div>
+
+                                                    <% if (row && row.updatedAt) { %>
+                                                        <i class="fa-solid fa-pen"></i>
+                                                        <%= new Intl.DateTimeFormat('vi-VN', { hour: 'numeric' ,
+                                                            minute: 'numeric' }) .format(new Date(row.updatedAt)) %>
+                                                            -
+                                                            <%= new Intl.DateTimeFormat('vi-VN', { day: 'numeric' ,
+                                                                month: 'numeric' , year: 'numeric' }) .format(new
+                                                                Date(row.updatedAt)) %>
+                                                                <% } else { %>
+
+                                                                    <% } %>
+                                                </div>
+
+                                            </td>
+
+
+                                            <td style="width: 300px;">
+
+                                                <% const name=row.name && row.name.length> 50 ? `${row.name.slice(0,
+                                                    50)}...` : row.name; %>
+                                                    <%= name %>
+                                            </td>
+
+                                            <td style="width: 150px;">
+                                                <%= row?.category_id?.name ? row.category_id.name : 'null' %>
+
+                                            </td>
+                                            <td class="" style="width: 170px;">
+                                                <% if (row?.discount==undefined || row?.discount==null||row?.discount==0
+                                                    ) { %>
+
+                                                    <div class="">
+                                                        <i class="fa-regular fa-money-bill-1"></i>
+                                                        <%= (row?.price ).toLocaleString('vi-VN', { style: 'currency' ,
+                                                            currency: 'VND' }) %>
+                                                    </div>
+                                                    
+                                                    <% } else { %>
+                                                        <div class="discount">
+                                                            <i class="fa-regular fa-money-bill-1"></i>
+                                                            <%= (row?.price ).toLocaleString('vi-VN', {
+                                                                style: 'currency' , currency: 'VND' }) %>
+                                                        </div>
+
+                                                        <div class="">
+                                                            <i class="fa-regular fa-money-bill-1"></i>
+                                                            <%= row?.discount ? row?.discount.toLocaleString('vi-VN', {
+                                                                style: 'currency' , currency: 'VND' }) :"" %>
+                                                        </div>
+                                                        <% } %>
+                                            </td>
+
+                                            <td class="" style="width: 100px;">
+                                                <img src="<%=row.image[0]%>" alt="Hình ảnh" width="100px"
+                                                    height="100px">
+                                            </td>
+                                            <td style="width: 300px;">
+                                                <% const description=row.description && row.description.length> 50 ?
+                                                    `${row.description.slice(0, 80)}...` : row.description; %>
+                                                    <%= description %>
+                                            </td>
+
+                                            <td style="width: 250px;">
+                                                <a href="/product/detail/<%= row._id %>" type="button"
+                                                    class="btn btn-warning m3-1">
+                                                    <i class="fa-solid fa-eye"></i></a>
+
+                                                <!-- Button trigger modal -->
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdropp<%=  row._id  %>">
+                                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                                </button>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="staticBackdropp<%=  row._id  %>"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="staticBackdropLabel">Thông
+                                                                    báo
+                                                                </h5>
+
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Bạn có muốn xóa <%= row.name %> ?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Hủy</button>
+                                                                <a href="/product/deleteproduct/<%= row._id %>?countPages=<%= countPages %>&countProducts=<%= countProducts %>"
+                                                                    class="btn btn-danger">Lưu thay đổi</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <a href="/product/updateproduct/<%= row._id %>" class="btn btn-primary">
+                                                    <i class="fa-regular fa-pen-to-square"></i> Sửa
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                            <% } %>
+
+
+                    </table>
+                </div>
+
+                <nav class="m-4" aria-label="Page navigation example">
+                    <p>
+                        <%= displayMessage %>
+                    </p>
+
+                    <ul class="pagination">
+                        <% if (page==1 || countProducts===0) { %>
+                            <!-- nếu trang hiện tại bằng 1 thì không cho giảm -->
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                            <% } else { %>
+                                <!-- khác 1 thì cho giảm -->
+                                <li class="page-item">
+                                    <a class="page-link" href="/product/listproduct/<%= page - 1 %>">Previous</a>
+                                </li>
+                                <% } %>
+
+                                    <% for (let i=1; i <=countPages; i++) { %>
+
+                                        <style>
+                                            .active-page {
+                                                color: white;
+                                                background-color: rgba(13, 110, 253, 255);
+                                                width: 35px;
+                                                height: 38px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                text-decoration: none;
+                                            }
+                                        </style>
+                                        <li class="page-item">
+                                            <a class="<%= i === page ?' active-page' : 'page-link' %>"
+                                                href="/product/listproduct/<%= i %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+
+                                            <% if (countPages==page || countProducts===0) { %>
+                                                <!-- // tổng số trang bằng trang hiện tại thì không cho tăng -->
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">Next</span>
+                                                </li>
+                                                <% } else { %>
+                                                    <!-- // tổng số trang khác trang hiện tại thì cho cho tăng -->
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                            href="/product/listproduct/<%= page +  1 %>">Next</a>
+                                                    </li>
+                                                    <% } %>
+                    </ul>
+                </nav>
+
+
+
+    </div>
+
+    <%- include('../inc/bottom') %>

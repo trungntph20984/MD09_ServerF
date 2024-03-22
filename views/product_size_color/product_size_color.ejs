@@ -1,0 +1,239 @@
+<%- include('../inc/top') %>
+    <div class="container-fluid">
+        <div class="d-flex m-1 mb-4"
+            style=" background-color: white; border-radius: 13px;  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);">
+            <form method="get" action="/product_size_color/search" class="input-group m-3 d-flex">
+                <div class="input-group" style="width: 80%;">
+                    <input placeholder="Tìm kiếm  ...." aria-label="Search for your product" type="text"
+                        class="form-control" id="floatingInput" name="search">
+                    <button style="margin-left:5px;margin-right:5px" type="submit" class="input-group-text bg-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                            <path
+                                d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                        </svg>
+                    </button>
+
+                </div>
+                <div class="d-flex" style="width: 20%;">
+                    <select class="form-select" id="filterGroup2" onchange="filterNameProduct()" style="width: 100%;">
+                        <option value="all" <%=selectedroductName==='all' ? 'selected' : '' %>>All</option>
+                        <% listproduct?.forEach(product=> { %>
+                            <option value="<%= product._id %>" <%=product._id==selectedroductName ? 'selected' : '' %>>
+                                <%= product.name %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+
+            </form>
+
+
+            <script>
+                function filterNameProduct() {
+                    var selectedroductName = document.getElementById("filterGroup2").value;
+                    if (selectedroductName === 'all') {
+                        window.location.href = "/product_size_color/getListAll/1";
+                    } else {
+                        window.location.href = "/product_size_color/filterNameProduct/?productName=" + selectedroductName;
+                    }
+
+
+                }
+
+            </script>
+        </div>
+
+        <div class="fw-bolder fs-4 text-success">
+            <%= message %>
+        </div>
+
+
+        <div class="" style="margin-left: 15px;">
+
+            <div class="row p-4"
+                style="width: 100%; background-color: white; border-radius: 13px;  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4); display: flex;">
+                <div class="d-flex justify-content-end me-3 mb-2">
+                    <a href="/product_size_color/export" type="button" class="btn btn-success me-3"><i
+                            class="fa-regular fa-file-excel"></i>
+                        Export</a>
+                    <a class="btn btn-primary" href="/product_size_color/add_product_size_color"><i
+                            class="fa-solid fa-plus" style="color: #ffffff;"></i> Thêm sản phẩm</a>
+                </div>
+
+                <table id="example" class="table ">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Kích cỡ</th>
+                            <th>Màu sắc</th>
+                            <th>Số lượng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <% if (productListSizeColor.length===0) { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center;justify-content: center;">
+                                <p>Dữ liệu không tồn tại.</p>
+                            </td>
+                        </tr>
+                        <% } else { %>
+                            <% let groupedProducts={}; %>
+                                <% productListSizeColor?.forEach(row=> { %>
+
+                                    <% if (!groupedProducts[row?.product_id?.name]) { %>
+
+                                        <% groupedProducts[row?.product_id?.name]=[]; %>
+                                            <% } %>
+                                                <% groupedProducts[row?.product_id?.name].push(row); %>
+                                                    <% }); %>
+
+
+                                                        <% Object.keys(groupedProducts).forEach(productName=> { %>
+                                                            <% let row=groupedProducts[productName]; %>
+
+
+                                                                <td rowspan="<%= row.length %>">
+                                                                    <%= productName %>
+                                                                </td>
+                                                                <% row.forEach((variant, index)=> { %>
+                                                                    <% if (index !==0) { %>
+                                                                        <tr>
+                                                                            <% } %>
+
+                                                                                <td>
+                                                                                    <%= variant?.size_id?.name %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= variant?.color_id?.name %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <% if (variant?.quantity===0) { %>
+                                                                                        Hết hàng
+                                                                                        <% } else { %>
+                                                                                            <%= variant?.quantity %>
+                                                                                                <% } %>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <button type="button"
+                                                                                        class="btn btn-danger"
+                                                                                        data-bs-toggle="modal"
+                                                                                        data-bs-target="#staticBackdropp<%=  variant._id  %>">
+                                                                                        <i
+                                                                                            class="fa-solid fa-trash-can"></i>
+                                                                                        Xóa
+                                                                                    </button>
+                                                                                    <div class="modal fade"
+                                                                                        id="staticBackdropp<%=  variant._id  %>"
+                                                                                        data-bs-backdrop="static"
+                                                                                        data-bs-keyboard="false"
+                                                                                        tabindex="-1"
+                                                                                        aria-labelledby="staticBackdropLabel"
+                                                                                        aria-hidden="true">
+                                                                                        <div class="modal-dialog">
+                                                                                            <div class="modal-content">
+                                                                                                <div
+                                                                                                    class="modal-header">
+                                                                                                    <h5 class="modal-title"
+                                                                                                        id="staticBackdropLabel">
+                                                                                                        Thông báo</h5>
+
+                                                                                                </div>
+                                                                                                <div class="modal-body">
+                                                                                                    Bạn có muốn xóa
+                                                                                                    <%=variant?.product_id?.name
+                                                                                                        %> </br>
+                                                                                                        Kích cỡ :
+                                                                                                        <%=variant?.size_id?.name
+                                                                                                            %> </br>
+                                                                                                            Màu sắc:
+                                                                                                            <%=variant?.color_id?.name
+                                                                                                                %>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="modal-footer">
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        class="btn btn-secondary"
+                                                                                                        data-bs-dismiss="modal">Hủy</button>
+                                                                                                    <a href="/product_size_color/delete_product_color_size/<%=variant._id %>"
+                                                                                                        class="btn btn-danger">Lưu
+                                                                                                        thay đổi</a>
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <a href="/product_size_color/update_product_size_color/<%=variant._id %>"
+                                                                                        class="btn btn-primary"> <i
+                                                                                            class="fa-regular fa-pen-to-square"></i>
+                                                                                        Sửa</a>
+                                                                                </td>
+                                                                        </tr>
+
+                                                                        <% }); %>
+
+                                                                            <% }); %>
+                                                                                <% } %>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <nav aria-label="Page navigation example" style="margin-top: 100px;">
+            <ul class="pagination">
+                <% if (page==1 || countProducts===0) { %>
+                    <!-- nếu trang hiện tại bằng 1 thì không cho giảm -->
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                    <% } else { %>
+                        <!-- khác 1 thì cho giảm -->
+                        <li class="page-item">
+                            <a class="page-link" href="/product_size_color/getListAll/<%= page - 1 %>">Previous</a>
+                        </li>
+                        <% } %>
+
+                            <% for (let i=1; i <=countPages; i++) { %>
+                                <style>
+                                    .active-page {
+                                        color: white;
+                                        background-color: rgba(13, 110, 253, 255);
+                                        width: 35px;
+                                        height: 38px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        text-decoration: none;
+                                    }
+                                </style>
+                                <li class="page-item">
+                                    <a class="<%= i === page ?' active-page' : 'page-link' %>"
+                                        href="/product_size_color/getListAll/<%= i %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+
+
+                                    <% if (countPages==page || countProducts===0) { %>
+                                        <!-- // tổng số trang bằng trang hiện tại thì không cho tăng -->
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Next</span>
+                                        </li>
+                                        <% } else { %>
+                                            <!-- // tổng số trang khác trang hiện tại thì cho cho tăng -->
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="/product_size_color/getListAll/<%= page +  1 %>">Next</a>
+                                            </li>
+                                            <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <%- include('../inc/bottom') %>

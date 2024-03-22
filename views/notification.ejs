@@ -1,0 +1,179 @@
+<%- include('./inc/top') %>
+    <script>
+        function clickPushNotification(){
+
+            const textTitle = document.getElementById('inputTitle').value;
+            const textContent = document.getElementById('inputContent').value;
+            const textIdProduct = document.getElementById('idSanPham').value;
+            const inputImage = document.getElementById('inputImage');
+            const imageFile = inputImage.files[0];
+
+            const formData = new FormData();
+            formData.append('listToken',listTokenUser);
+            formData.append('title', textTitle);
+            formData.append('content', textContent);
+            formData.append('payload', textIdProduct);
+            formData.append('status', '1');
+            formData.append('inputImage', imageFile);
+
+            fetch('<%= baseUrl %>/notification' ,{
+                method: 'POST',
+                body : formData
+            }).then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+    </script>
+
+    <div class="row col-12">
+        <div class="row p-3 m-4 col-md-4 col-11" style=" background-color: white;
+             border-radius: 13px; 
+              box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+               margin: 20px; 
+              height: 550px;
+                ">
+                <div class="text-center">
+                    <p class="fs-2 fw-bold">Thông báo</p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="inputTitle" class="inputTitle">Hình ảnh</label>
+                    <div class="input-group boderBtn rounded-2">
+                        <input id="inputImage" name="inputImage" accept="image/*" type="file" class="form-control">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="inputTitle" class="inputTitle">Tiêu đề</label>
+                    <input type="text" class="form-control" id="inputTitle" placeholder="Nhập tiêu đề" required>
+                </div>
+                <div class="mb-3">
+                    <label for="inputContent" class="inputContent">Nội dung</label>
+                    <textarea class="form-control" id="inputContent" rows="3" placeholder="Nhập nội dung" required></textarea>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="inputContent" class="inputContent">Liên kết đến sản phẩm</label>
+                    <select id="idSanPham" name="idSanPham" class="form-control">
+                        <option value="0">Sản phẩm...</option>
+                        <% for(let i= 0 ; i < listProduct.length; i++){ %>
+                            <option value="<%= listProduct[i]._id %>"><%= listProduct[i].name %></option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button style="height: 48px;" onclick="clickPushNotification()" class="btn btn-primary">Gửi thông báo</button>
+                </div>
+        
+        </div>
+
+
+
+        <div class="row p-3 m-4 col-md-7 col-11"
+            style=" background-color: white; border-radius: 13px;  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4); margin: 20px;">
+            <div class="text-center">
+                <p class="fs-2 fw-bold">Người dùng</p>
+            </div>
+
+            <div class="col-12">
+                <nav class="navbar">
+                    <div class="container justify-content-end">
+                        <form class="d-flex" role="search" action="/notification">
+                            <input class="form-control me-2 boderBtn" type="search" placeholder="Search"
+                                aria-label="Search" style="width: 300px;" name="search" value="<%= search %>">
+                                <button style="height: 40px; width: 120px;" type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+            <table id="example" class="table  table-hover " style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>SĐT</th>
+                        <th>Họ và tên</th>
+                        <th>
+                            <div class="form-check mb-2 custom-checkbox">
+                                <input style="width: 1.8em;height: 1.8em;"
+                                    type="checkbox" id="masterCheckbox">
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <% if (listUser.length===0) { %>
+                    <tr>
+                        <td colspan="7" style="text-align: center;justify-content: center;">
+                            <p>Dữ liệu không tồn tại.</p>
+                        </td>
+                    </tr>
+                    <% } else { %>
+
+                        <% for (let i=0; i < listUser.length; i++) { %>
+                            <% const row=listUser[i]; %>
+                                <tr>
+
+                                    <td>
+                                        <%= i+1 %>
+                                    </td>
+                                    <td>
+                                        <%= row.phone_number %>
+                                    </td>
+                                    <td>
+                                        <%= row.full_name %>
+                                    </td>
+                                    <td>
+                                        <div class="form-check mb-3 custom-checkbox">
+                                            <input style="width: 1.6em;height: 1.6em;" class="checkboxItem"
+                                                type="checkbox" id="<%= row.token %>">
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <% } %>
+                            <% } %>
+
+            </table>
+        </div>
+    </div>
+
+    <%- include('./inc/bottom') %>
+
+    <script>
+        let listTokenUser = [];
+
+        const masterCheckbox = document.getElementById('masterCheckbox');
+        const checkboxItems = document.querySelectorAll('.checkboxItem');
+
+        masterCheckbox.addEventListener('change' , function (checkbox){
+            listTokenUser = [];
+            checkboxItems.forEach(function (checkboxItem){
+                checkboxItem.checked = masterCheckbox.checked;
+                if(masterCheckbox.checked){
+                    if(checkboxItem.id == "") return;
+                    listTokenUser.push(checkboxItem.id);
+                }else{
+                    listTokenUser = listTokenUser.filter(item => item !== this.id);
+                }
+            });
+            
+        })
+
+        checkboxItems.forEach(function (checkbox){
+            checkbox.addEventListener('change' , function (){
+                masterCheckbox.checked = false;
+                if(this.checked){
+                    if(this.id == "") return;
+                    listTokenUser.push(this.id);
+                }else{
+                    listTokenUser = listTokenUser.filter(item => item !== this.id);
+                }
+            })
+        })
+
+    </script>

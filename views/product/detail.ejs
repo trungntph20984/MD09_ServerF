@@ -1,0 +1,136 @@
+<%- include('../inc/top') %>
+    <style>
+        .editDetail {
+            background-color: white;
+            border-radius: 13px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+            width: auto;
+            margin: 20px;
+        }
+
+        .imagedetail {
+            width: 500px;
+            height: 500px;
+        }
+
+        .layoutdetail {
+            display: flex;
+            align-items: center;
+
+        }
+
+        .fa-solid.fa-circle-chevron-left {
+            font-size: 50px;
+
+        }
+
+        .fa-solid.fa-circle-chevron-right {
+            font-size: 50px;
+
+        }
+    </style>
+    <div class="container-fluid p-4  d-flex justify-content-center  editDetail">
+
+        <div class="layoutdetail m-5">
+            <% if(+currenImage===0 ){ %>
+                <a href="?left=<%= +currenImage - 1 %>" style="color: black; visibility: hidden;"> <i
+                        class="fa-solid fa-circle-chevron-left"></i></a>
+                <img id="productImage" class="imagedetail" src="<%=ListProduct.image[currenImage] %>" alt="hình ảnh">
+
+                <a href="?right=<%= +currenImage + 1  %>" style="color: black; "> <i
+                        class="fa-solid fa-circle-chevron-right"></i></a>
+                <% }else if( currenImage==lengthImage ){ %>
+                    <a href="?left=<%= +currenImage - 1 %>" style="color: black;"> <i
+                            class="fa-solid fa-circle-chevron-left"></i></a>
+                    <img id="productImage" class="imagedetail" src="<%=ListProduct.image[currenImage] %>"
+                        alt="hình ảnh">
+                    <a href="?right=<%= +currenImage + 1  %>" style="color: black; visibility: hidden;"> <i
+                            class="fa-solid fa-circle-chevron-right"></i></a>
+                    <% }else if(+currenImage==0 && lengthImage==0 ){%>
+                        <img id="productImage" class="imagedetail" src="<%=ListProduct.image[currenImage] %>"
+                            alt="hình ảnh">
+
+                        <% }else{ %>
+                            <a href="?left=<%= +currenImage - 1 %>" style="color: black;"> <i
+                                    class="fa-solid fa-circle-chevron-left"></i></a>
+                            <img id="productImage" class="imagedetail" src="<%=ListProduct.image[currenImage] %>"
+                                alt="hình ảnh">
+                            <a href="?right=<%= +currenImage + 1  %>" style="color: black;"> <i
+                                    class="fa-solid fa-circle-chevron-right"></i></a>
+                            <%} %>
+        </div>
+        <div style="width: 100%;" class="m-5">
+
+            <div>
+                <p class="fs-1">
+                    <%= ListProduct.name %>
+                </p>
+
+              
+
+                <% if (ListProduct?.discount ==undefined ||ListProduct?.discount ==null ||ListProduct?.discount ==0  ) { %>
+                    <p class="fw-bolder fs-2" >
+                        <%= (ListProduct?.price).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                    </p>
+                    <% } else { %>        
+                        <p class="fw-bolder " style=" text-decoration: line-through;">
+                            <%= (ListProduct?.price).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                        </p>
+                        <p class="fw-bolder fs-2">
+                            <%= (ListProduct?.discount).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                        </p>
+                        <% } %>
+
+
+                <p class="">Mô tả :</p>
+
+                <p style="width: 500px;">
+                    <%= ListProduct.description %>
+                </p>
+            </div>
+            <% if(productListSizeColor.length>0){ %>
+                <div class="me-8">
+                    <table style="width: 100%;" id="example" class="table  table-hover ">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Kích cỡ</th>
+                                <th>Màu sắc</th>
+                                <th>Số lượng</th>
+
+                            </tr>
+                        </thead>
+
+
+                        <% for (let i=0; i < productListSizeColor?.length; i++) { %>
+                            <% const row=productListSizeColor[i]; %>
+                                <tr>
+                                    <td>
+                                        <%= i +1 %>
+                                    </td>
+                                    <td>
+                                        <%= row?.size_id?.name %>
+                                    </td>
+                                    <td>
+                                        <%= row?.color_id?.name %>
+                                    </td>
+                                    <td>
+
+                                        <%= row.quantity %>
+                                    </td>
+
+                                </tr>
+                                <% } %>
+
+                    </table>
+                </div>
+                <%}else{ %>
+                    <div></div>
+                    <% } %>
+        </div>
+
+
+    </div>
+
+
+    <%- include('../inc/bottom') %>

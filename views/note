@@ -1,0 +1,89 @@
+user.view.ejs
+user.edit.ejs
+...
+?
+//123
+// "vnp_ReturnUrl": "http://localhost:3000/order/vnpay_return"
+// //"vnp_ReturnUrl": "https://1212.onrender.com/order/vnpay_return"
+
+
+status bill
+1 : Đã đặt hàng (thông báo cho người dùng đã đặt hàng thàng công);
+2 : Đặt hàng thất bại (lỗi do một vấn đề nào đó không biết);
+3 : Đã thanh toán
+4 : Chưa thanh toán (trường hợp này cho khi thanh toán online lỗi);
+5 : Đang vận chuyển
+6 : Vận chuyển thất bại
+7 : Hoàn thành
+// có thể thêm
+8 : người mua không nhận hàng
+9 : ....
+// có thể sử dụng thẻ option , 
+nếu được thì làm thêm phân màu  : 
+    7 xanh lá 
+    4 , 6 , 2  màu đỏ
+    1 , 3 ,5 màu xanh dương
+
+
+
+
+payments bill
+1 = COD
+2 = VNP
+
+// api sản phẩm trang bắt đầu từ 0 
+http://localhost:6868/api/products/Popular/0
+// chi tiết sản phẩm 
+http://localhost:6868/api/getListAll_deltail/id_product
+
+// tìm kiếm sản phẩm 
+http://localhost:6868/api/products/search?searchValues=BASKETBAL
+// sắp xếp sản phẩm theo giá 
+http://localhost:6868/api/products/sortUp?category=Popular
+http://localhost:6868/api/products/sortDown?category=Popular
+
+
+// yêu thích
+http://localhost:6868/api/getListFavorite/id_user 
+http://localhost:6868/api/addFavorite/iduser/id_product
+http://localhost:6868/api/deleteFavorite/id_favorite
+
+http://localhost:6868/api/products/:skip/:limit
+
+// bill
+http://localhost:3000/api/bill GET ALL
+http://localhost:3000/api/bill/id GET by ID USER
+http://localhost:3000/api/addbill POST
+http://localhost:3000/api/bill/id PUT
+http://localhost:3000/api/bill/id DELETE
+http://localhost:3000/api/bill/pagination?page=1 PAGINATION
+
+// users
+http://localhost:3000/api/users GET
+http://localhost:3000/api/users/pagination?page=1 PAGINATION
+http://localhost:3000/api/userslogin POSTLOGIN
+http://localhost:3000/api/users POST
+http://localhost:3000/api/users/idu PUT
+http://localhost:3000/api/users/idu DELETE
+<!-- nodemon ./bin/www -->
+// cart
+http://localhost:3000/api/cart GET
+http://localhost:3000/api/cart/pagination?page=1 PAGINATION
+http://localhost:3000/api/cart POST
+http://localhost:3000/api/cart/id PUT
+http://localhost:3000/api/cart/id DELETE
+
+// address
+http://localhost:3000/api/address GET
+http://localhost:3000/api/address POST
+http://localhost:3000/api/address/id PUT
+http://localhost:3000/api/address/id DELETE
+
+// cart 
+
+http://localhost:6868/api/getListCart/:idUser/:idProduct GET
+http://localhost:6868/api/updateCart/:idUser/:idCart POST         // truyền body tên là quantity
+/addCart/:idUser/:idProduct POST
+/deleteCart/:id    DELETE
+// sửa lại một số thứ 
+// sửa lại thêm sản phẩm vòa kho , check sửa sản phẩm trong kho , và đang phân vân có nên làm chưcs năng xóa hay không 

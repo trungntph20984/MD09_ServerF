@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        <%= title ? title : '' %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/jpg+png"
+        href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvQQUWGc8Yh40A63eZSMRTCqU9MDK5GLti1xuhfYakUg&s" />
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <script src="/bootstrap/js/bootstrap.bundle.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/stylesheets/indexStyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-details">
+            <div class="logo_name">ADADAS</div>
+            <i class='bx bx-menu' id="btn">
+            </i>
+        </div>
+
+
+        <ul class="nav-list" style="padding-left: 0rem;">
+
+            <li onclick="highlightItem(this)">
+                <a href="/">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-file-bar-graph" viewBox="0 0 16 16">
+                            <path
+                                d="M4.5 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-1zm3 0a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1zm3 0a.5.5 0 0 1-.5-.5v-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-1z" />
+                            <path
+                                d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Thống kê</span>
+                </a>
+                <span class="tooltip">Thống kê</span>
+            </li>
+            <li>
+                <a href="/product/listproduct/1">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="20"
+                            viewBox="0 0 640 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                            <path
+                                d="M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Sản phẩm</span>
+                </a>
+                <span class="tooltip">Sản phẩm</span>
+            </li>
+            <li class="" data-bs-toggle="dropdown" data-bs-target="#" aria-expanded="false">
+                <a>
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-file-bar-graph" viewBox="0 0 16 16">
+                            <path
+                                d="M4.5 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-1zm3 0a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1zm3 0a.5.5 0 0 1-.5-.5v-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-1z" />
+                            <path
+                                d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Thuộc tính</span>
+                </a>
+                <span class="tooltip">Thuộc tính</span>
+            </li>
+            <style>
+                .ab {
+                    margin: 5px;
+
+                }
+            </style>
+            <li class="">
+                <ul class="dropdown-menu dropdown-menu-dark" style="width: 220px; padding: 10px;padding-right: 22px;">
+                    <a class="dropdown-item ab" href="/category">Thể loại</a>
+                    <a class="dropdown-item ab" href="/color">Màu sắc</a>
+                    <a class="dropdown-item ab" href="/size">Kích thước </a>
+                    <a class="dropdown-item ab" href="/banner">Khuyến mãi </a>
+
+                </ul>
+            </li>
+            <li>
+                <a href="/product_size_color/getListAll/1">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                            viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                            <style>
+                                svg {
+                                    fill: #ffffff
+                                }
+                            </style>
+                            <path
+                                d="M0 488V171.3c0-26.2 15.9-49.7 40.2-59.4L308.1 4.8c7.6-3.1 16.1-3.1 23.8 0L599.8 111.9c24.3 9.7 40.2 33.3 40.2 59.4V488c0 13.3-10.7 24-24 24H568c-13.3 0-24-10.7-24-24V224c0-17.7-14.3-32-32-32H128c-17.7 0-32 14.3-32 32V488c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24zm488 24l-336 0c-13.3 0-24-10.7-24-24V432H512l0 56c0 13.3-10.7 24-24 24zM128 400V336H512v64H128zm0-96V224H512l0 80H128z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Kho hàng</span>
+                </a>
+                <span class="tooltip">Kho hàng</span>
+            </li>
+            <li>
+                <a href="/bill">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                            viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                            <path
+                                d="M160 112c0-35.3 28.7-64 64-64s64 28.7 64 64v48H160V112zm-48 48H48c-26.5 0-48 21.5-48 48V416c0 53 43 96 96 96H352c53 0 96-43 96-96V208c0-26.5-21.5-48-48-48H336V112C336 50.1 285.9 0 224 0S112 50.1 112 112v48zm24 48a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm152 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Hóa đơn</span>
+                </a>
+                <span class="tooltip">Hóa đơn</span>
+            </li>
+
+            <li>
+                <a href="/users">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                            viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                            <path
+                                d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">User</span>
+                </a>
+                <span class="tooltip">User</span>
+            </li>
+            <!-- <li>
+                <a href="#">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-bucket-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M2.522 5H2a.5.5 0 0 0-.494.574l1.372 9.149A1.5 1.5 0 0 0 4.36 16h7.278a1.5 1.5 0 0 0 1.483-1.277l1.373-9.149A.5.5 0 0 0 14 5h-.522A5.5 5.5 0 0 0 2.522 5zm1.005 0a4.5 4.5 0 0 1 8.945 0H3.527z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Đơn hàng</span>
+                </a>
+                <span class="tooltip">Đơn hàng</span>
+            </li> -->
+
+
+
+
+            <li>
+                <a href="/discount">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                            viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                            <path
+                                d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Phiếu giảm giá </span>
+                </a>
+                <span class="tooltip">Phiếu giảm giá </span>
+            </li>
+            <li>
+                <a href="/notification">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                            viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                            <path
+                                d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Thông báo</span>
+                </a>
+                <span class="tooltip">Thông báo</span>
+            </li>
+            <li>
+                <a href="/chatbox">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="20"
+                            viewBox="0 0 640 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                            <path
+                                d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z" />
+                        </svg>
+                    </i>
+                    <span class="links_name"> Chat</span>
+                </a>
+                <span class="tooltip"> Chat</span>
+            </li>
+
+            <li>
+                <a href="/logout">
+                    <i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+                            <path fill-rule="evenodd"
+                                d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                        </svg>
+                    </i>
+                    <span class="links_name">Đăng xuất</span>
+                </a>
+                <span class="tooltip">Đăng xuất</span>
+            </li>
+        </ul>
+
+
+    </div>
+
+
+
+    <div class="home-section">
+        <div style="margin-top: 100px;"></div>
+
+
+        <nav class="navbar fixed-top justify-content-between py-2"
+            style="background-color: rgb(188, 198, 200); z-index: 1;">
+
+            <div class="ms-2">
+                <div>
+                    <p class="fw-bold fs-2 text-primary ">
+                        <%= heading ? heading : heading %>
+                    </p>
+                </div>
+            </div>
+            <!-- <div class="d-flex">
+                <div class="d-flex mx-2 align-items-center">
+
+                    <div id="clock" class="fw-bold  fs-6 me-5 d-none d-sm-block d-md-block d-lg-block d-xxl-block">
+                    </div>
+                    <div class="dropstart" id="personal">
+                        <button type="button"
+                            style="border-width: 0px; border-radius: 50%; width: 45px; height: 45px; padding: 0;"
+                            data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                            <img src="https://fptshop.com.vn/Uploads/images/image001(1265).jpg" alt="" width="45px"
+                                height="45px" style="object-fit: cover;
+                        border-radius: 50%;">
+                        </button>
+
+                    </div>
+                </div>
+            </div> -->
+        </nav>

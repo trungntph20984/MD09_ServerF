@@ -1,0 +1,417 @@
+<%- include('../inc/top') %>
+
+    <% if (message==='Thêm thành công' || message==='Cập nhật thành công' || message==='Xóa thành công' ) { %>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thông báo!',
+                text: '<%= message %>',
+
+            });
+        </script>
+        <% } %>
+
+
+
+            <div class="row p-3  shadowpro" style="margin-left: 20px;margin-right:20px;">
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form method="POST" action="/discount/add">
+
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" style="color: rgb(32, 39, 226);"
+                                        id="staticBackdropLabel">
+                                        Thêm Voucher
+                                    </h1>
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+
+                                    <div class="d-flex justify-content-end">
+                                        <div class="form-check">
+                                            <input type="radio" class="form-check-input form-check-square" id="radioAll"
+                                                name="radioGroup" checked
+                                                onchange="toggleDropdown('emptyContent', 'selectOptions')">
+                                            <label class="form-check-label me-3" for="radioAll">Tất cả</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="radio" class="form-check-input form-check-square"
+                                                id="radioSpecific" name="radioGroup"
+                                                onchange="toggleDropdown('selectOptions', 'emptyContent')">
+                                            <label class="form-check-label me-3" for="radioSpecific">Chỉ
+                                                định</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="start_day">Hiệu lực từ </label>
+                                        <div class="input-group date">
+                                            <input name="start_day" type="datetime-local" class="form-control"
+                                                id="start_day" required>
+                                        </div>
+                                        <small id="startError" style="color: red;"></small>
+                                    </div>
+
+                                    <script>
+                                        document.getElementById("start_day").addEventListener("input", function () {
+                                            var currentDateTime = new Date();
+                                            var selectedDateTime = new Date(this.value);
+                                         
+
+                                            if (selectedDateTime < currentDateTime) {
+                                                console.log("selectedDateTime",selectedDateTime);
+                                                console.log("currentDateTime",currentDateTime);
+
+                                                document.getElementById("startError").innerHTML = "Vui lòng chọn ngày và giờ lớn hơn hiện tại.";
+                                                this.setCustomValidity("Nhập sai"); // Chặn submit form
+                                            } else {
+                                                document.getElementById("startError").innerHTML = "";
+                                                this.setCustomValidity(""); // Cho phép submit form
+                                            }
+                                        });
+                                    </script>
+
+                                    <div class="form-group mb-3">
+                                        <label for="end_day">Hiệu lực đến </label>
+                                        <div class="input-group date">
+                                            <input name="end_day" type="datetime-local" class="form-control"
+                                                id="end_day" required>
+                                        </div>
+                                        <small id="endError" style="color: red;"></small>
+                                    </div>
+
+                                    <script>
+                                        document.getElementById("end_day").addEventListener("input", function () {
+                                            var startDateTime = new Date(document.getElementById("start_day").value);
+                                            var endDateTime = new Date(this.value);
+
+                                            if (endDateTime <= startDateTime) {
+                                                document.getElementById("endError").innerHTML = "Vui lòng chọn ngày và giờ lớn hơn ngày và giờ bắt đầu.";
+                                                this.setCustomValidity("Nhập sai"); // Chặn submit form
+                                            } else {
+                                                document.getElementById("endError").innerHTML = "";
+                                                this.setCustomValidity(""); // Cho phép submit form
+                                            }
+                                        });
+                                    </script>
+
+                                    <div class="input-group">
+                                        <input name="voucherCode" type="text" class="form-control" id="voucherCode"
+                                            placeholder="Mã voucher" required>
+                                        <div class="input-group-append">
+                                            <span onclick="generateCode()" style="height: 40px;"
+                                                class="input-group-text">
+                                                <i class="fas fa-shuffle"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <script>
+
+                                        function toggleDropdown(showId, hideId) {
+                                            var showDropdown = document.getElementById(showId);
+                                            var hideDropdown = document.getElementById(hideId);
+
+                                            if (showDropdown && hideDropdown) {
+                                                showDropdown.style.display = 'block';
+                                                hideDropdown.style.display = 'none';
+                                            }
+                                        }
+                                        function generateCode() {
+                                            var currentDate = new Date();
+                                            var code = 'CODE_' + currentDate.getTime();
+                                            document.getElementById('voucherCode').value = code;
+                                        }
+
+
+
+                                    </script>
+                                    <div class="custom-dropdown mb-3 mt-3" id="emptyContent">
+                                        <!-- Thẻ div này sẽ trống khi chọn "Tất cả" -->
+                                    </div>
+                                    <div class="custom-dropdown mb-3 mt-5" id="selectOptions" style="display:none;">
+                                        <label for="selectOptions">Chọn người dùng được sử dụng voucher</label>
+                                        <select name="user" multiple class="form-control">
+                                            <% for (const user of listUser) { %>
+                                                <option value="<%= user._id %>">
+                                                    <%= user.full_name %>
+                                                </option>
+                                                <% } %>
+                                        </select>
+                                    </div>
+                                    <div class=" mt-3 mb-3">
+                                        <input name="description" type="text" class="form-control" id="description"
+                                            placeholder="Mô tả" required>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input name="price" type="number" class="form-control" id="price"
+                                            placeholder="Nhập giá..." required>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <input name="usageCount" type="number" class="form-control" id="usageCount"
+                                            placeholder="Nhập số lần được sử dụng" required>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end ">
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"> <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+                        Thêm Voucher</button>
+                </div>
+
+
+
+                <!-- /////////////////// tableeeeeeeeeeeeeee -->
+                <table id="example" class="table  table-hover " style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Thời gian</th>
+                            <th>Mô tả</th>
+                            <th>Mã Voucher</th>
+                            <th>
+                                Giá
+                                <span class="sort-icon">
+                                    <a href="/product/sortDown"><i class="fa-solid fa-caret-down"></i></i></a>
+                                    <a href="/product/sortUp"><i class="fa-solid fa-caret-up"></i></a>
+                                </span>
+                            </th>
+                            <th> Số lượng người dùng được phép sử dụng</th>
+                            <th>Số lượng cho phép sử dụng</th>
+                            <th>Thao tác</th>
+
+                        </tr>
+                    </thead>
+
+                    <% if (litsDiscount.length===0) { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center;justify-content: center;">
+                                <p>Dữ liệu không tồn tại.</p>
+                            </td>
+                        </tr>
+                        <% } else { %>
+
+                            <% for (let i=0; i < litsDiscount.length; i++) { %>
+                                <% const row=litsDiscount[i]; %>
+                                    <tr>
+
+                                        <td>
+                                            <%= i+1 %>
+                                        </td>
+                                        <td>
+
+                                            Bắt đầu: <%= row.start_day %> <br>
+                                                Kết thúc: <%= row.end_day %>
+
+                                        </td>
+                                        <td>
+                                            <%= row.description %>
+                                        </td>
+                                        <td>
+                                            <%= row?.code_discount %>
+                                        </td>
+                                        <td>
+                                            <div class="">
+                                                <i class="fa-regular fa-money-bill-1"></i>
+                                                <%= row?.price? row?.price.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) :"" %>
+                                            </div>
+
+                                        </td>
+                                        <td>
+
+                                            <%= row?.user_id.length===lengthUser ? 'Tất cả' :row?.user_id.length %>
+
+                                        </td>
+
+                                        <td>
+                                            <%= row?.usageCount %>
+
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <!-- model xóa -->
+                                                <div class="me-1">
+
+                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdroppp<%= row._id %>">
+                                                        <i class="fa-solid fa-trash-can"></i> Xóa
+                                                    </button>
+
+                                                    <div class="modal fade" id="staticBackdroppp<%= row._id %>"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Thông
+                                                                        báo
+                                                                    </h5>
+
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Bạn có muốn xóa Voucher có mã <%= row.code_discount
+                                                                        %> ?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Hủy
+                                                                    </button>
+                                                                    <a href="/discount/delete/<%= row._id %>"
+                                                                        class="btn btn-danger">Lưu thay
+                                                                        đổi</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- model sửa -->
+                                                <div>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdropppp<%= row._id %>">
+                                                        <i class="fa-regular fa-pen-to-square"></i> Sửa
+                                                    </button>
+
+                                                    <div class="modal fade" id="staticBackdropppp<%= row._id %>"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg">
+                                                            <form action="/discount/edit/<%= row._id %>" method="post">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="staticBackdropLabel">
+                                                                            Sửa discount
+                                                                        </h5>
+
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <form method="POST"
+                                                                            action="/discount/edit/<%= row.id %>">
+                                                                            <div class="form-group mb-3">
+                                                                                <label for="start_day">Hiệu lực
+                                                                                    từ</label>
+                                                                                <div class="input-group date">
+                                                                                    <input name="start_day"
+                                                                                        value="<%= row.start_day %>"
+                                                                                        type="datetime-local"
+                                                                                        class="form-control"
+                                                                                        id="start_day">
+                                                                                </div>
+                                                                            </div>
+
+
+
+                                                                            <div class="form-group mb-3">
+                                                                                <label for="end_day">Hiệu lực đến
+                                                                                </label>
+                                                                                <div class="input-group date">
+                                                                                    <input name="end_day"
+                                                                                        type="datetime-local"
+                                                                                        value="<%= row.end_day %>"
+                                                                                        class="form-control"
+                                                                                        id="end_day">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="input-group">
+                                                                                <input name="voucherCode" type="text"
+                                                                                    class="form-control"
+                                                                                    value="<%= row.code_discount %>"
+                                                                                    id="voucherCode"
+                                                                                    placeholder="Mã voucher">
+
+                                                                                <div class="input-group-append">
+                                                                                    <span onclick=""
+                                                                                        style="height: 40px;"
+                                                                                        class="input-group-text">
+                                                                                        <i class="fas fa-shuffle"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                            <div class="mt-3">
+                                                                                <label for="selectOptionssss">Sửa
+                                                                                    người dùng được sử dụng
+                                                                                    voucher</label>
+                                                                                <select name="user" multiple
+                                                                                    aria-valuemax=""
+                                                                                    class="form-control">
+                                                                                    <% for (const user of listUser) { %>
+                                                                                        <option value="<%= user._id %>"
+                                                                                            <%=row.user_id.includes(user._id)
+                                                                                            ? 'selected' : '' %>>
+                                                                                            <%= user.full_name %>
+                                                                                        </option>
+                                                                                        <% } %>
+                                                                                </select>
+
+                                                                            </div>
+
+
+                                                                            <div class=" mt-3 mb-3">
+
+                                                                                <input name="description"
+                                                                                    value="<%= row.description  %>"
+                                                                                    type="text" class="form-control"
+                                                                                    id="description"
+                                                                                    placeholder="Mô tả">
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <input value="<%= row.price %>"
+                                                                                    name="price" type="number"
+                                                                                    class="form-control" id="price"
+                                                                                    placeholder="Nhập giá...">
+                                                                            </div>
+
+                                                                            <div class="mt-3">
+                                                                                <input name="usageCount" type="number"
+                                                                                    value="<%= row.usageCount %>"
+                                                                                    class="form-control" id="usageCount"
+                                                                                    placeholder="Nhập số lần được sử dụng">
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <button type="button"
+                                                                                    class="btn btn-secondary"
+                                                                                    data-bs-dismiss="modal">Hủy</button>
+                                                                                <button type="submit"
+                                                                                    class="btn btn-primary">Lưu thay
+                                                                                    đổi</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                        <% } %>
+
+
+                </table>
+
+
+            </div>
+
+            <%- include('../inc/bottom') %>

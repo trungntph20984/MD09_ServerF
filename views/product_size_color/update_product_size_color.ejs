@@ -1,0 +1,101 @@
+<%- include('../inc/top') %>
+
+    <% if ( message==='Cập nhật thành công' ) { %>
+
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thông báo!',
+                text: '<%= message %>',
+
+            });
+        </script>
+
+        <% } %>
+
+
+
+            <div class="container-fluid bgform">
+
+
+                <div style="display: flex; flex-direction: row;">
+                    <% if (product_size_color?.product_id?.image) { %>
+                        <% product_size_color?.product_id?.image.forEach(image=> { %>
+                            <div style="margin-left: 27px;">
+                                <img src="<%= image %>" alt="Hình ảnh" style="width: 150px; height: 150px;">
+                            </div>
+                            <% }); %>
+                                <% } %>
+                </div>
+
+
+                <form method="POST" class="m-4">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Tên sản
+                            phẩm</span>
+                        <input name="name" value="<%= product_size_color?.product_id?.name %>" type="text"
+                            class="form-control" readonly aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-lg">
+                    </div>
+
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Giá</span>
+                        <input name="price" value="<%= product_size_color?.product_id?.price %>" type="text"
+                            class="form-control" readonly aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-lg">
+                    </div>
+
+
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Kích cỡ </span>
+                        <select name="size" class="form-control form-select "
+                            aria-label="Sizing example input Default select example"
+                            aria-describedby="inputGroup-sizing-lg" name="productName" >
+                            <% size?.forEach((size)=> { %>
+                                <% let selected='' ; if (String(product_size_color?.size_id?.name)==String(size.name)) {
+                                    selected='selected' ; } %>
+                                    <option <%=selected %> value="<%=size._id%>"><%=size.name %>
+                                    </option>
+                                    <% }); %>
+                        </select>
+                    </div>
+                    <% if (color.length > 0) { %>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Màu
+                                sắc</span>
+                            <select name="color" class="form-control form-select"
+                                aria-label="Sizing example input Default select example"
+                                aria-describedby="inputGroup-sizing-lg" name="productName">
+                                <% color.forEach((color)=> { %>
+                                    <% let selected='' ; if
+                                        (String(product_size_color?.color_id?.name)===String(color.name)) {
+                                        selected='selected' ; } %>
+                                        <option <%=selected %> value="<%=color._id%>"><%=color.name %>
+                                        </option>
+                                        <% }); %>
+                            </select>
+                        </div>
+                        <% } else { %>
+                            <div>Sản phẩm đã được thêm hết màu</div>
+                            <% } %>
+
+
+                                <div class="input-group input-group-lg mb-3">
+                                    <span class="input-group-text" style="width: 170px; " id="inputGroup-sizing-lg">Số
+                                        lượng</span>
+                                    <input name="quantity" value="<%=product_size_color.quantity %>" type="text"
+                                        class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-lg">
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary "
+                                        style="width: 250px; ">Submit</button>
+                                </div>
+
+                </form>
+
+
+            </div>
+
+
+            <%- include('../inc/bottom') %>

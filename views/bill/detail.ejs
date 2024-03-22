@@ -1,0 +1,171 @@
+<%- include('../inc/top') %>
+
+    <!-- Thêm CSS Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin: 20px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+    <div class="container">
+        <h1 class="text-center my-4">
+            Chi tiết hóa đơn
+        </h1>
+
+        <div class="card">
+            <div class="card-header">
+                Thông tin hóa đơn
+            </div>
+            <div class="card-body">
+                <p>Mã hóa đơn: <%= bill._id %>
+                </p>
+                <p>Phương thức thanh toán: <%= bill.payments==1 ? 'COD' : 'VNP' %>
+                </p>
+                <p>Tổng tiền: <%= bill.total_amount %>
+                </p>
+                <p>Trạng thái:
+                    <%= { 1: 'Đã đặt hàng' , 2: 'Đặt hàng thất bại' , 3: 'Đã thanh toán' , 4: 'Chưa thanh toán' ,
+                        5: 'Đang vận chuyển' , 6: 'Vận chuyển thất bại' , 7: 'Hoàn thành' ,
+                        8: 'Người mua không nhận hàng' , 9: 'Hủy' }[bill.status] || 'Trạng thái không xác định' %>
+                </p>
+                <p>Ngày: <% var date=new Date(bill.createdAt); %>
+                        <%= date.toLocaleTimeString('vi-VN', { hour: '2-digit' , minute: '2-digit' }) %> -
+                            <%= date.toLocaleDateString('vi-VN', { day: '2-digit' , month: '2-digit' , year: 'numeric'
+                                }) %>
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Thông tin người dùng
+            </div>
+            <div class="card-body">
+                <p>Mã người dùng: <%= bill.user_id._id %>
+                </p>
+                <p>Tên người dùng: <%= bill.user_data.username %>
+                </p>
+                <p>Họ và tên: <%= bill.user_data.full_name %>
+                </p>
+                <p>Địa chỉ : <%= bill.user_data.address.specific_addres %>
+                        <%= bill.user_data.address.address %>
+                </p>
+                <p>Số điện thoại: <%= bill.user_data.phone_number %>
+                </p>
+                <p>Vai trò: <%= bill.user_data.role %>
+                </p>
+                <p>Email: <%= bill.user_data.email %>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header">
+                Thông tin giỏ hàng
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Trạng thái giỏ hàng</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Ngày tạo sản phẩm</th>
+                            <th scope="col">Tên sản phẩm</th>
+                            <th scope="col">Mô tả</th>
+                            <th scope="col">Giá</th>
+                            <th scope="col">Danh mục</th>
+                            <th scope="col">Kích cỡ</th>
+                            <th scope="col">Màu sắc</th>
+                            <th scope="col">Hình ảnh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bill.cart_data.forEach(function(cart) { %>
+                            <tr>
+                                <td>
+                                    <%= cart.status %>
+                                </td>
+                                <td>
+                                    <%= cart.quantity %>
+                                </td>
+                                <td>
+                                    <% var date=new Date(cart.createdAt); %>
+                                        <%= date.toLocaleTimeString('vi-VN', { hour: '2-digit' , minute: '2-digit' }) %>
+                                            -
+                                            <%= date.toLocaleDateString('vi-VN', { day: '2-digit' , month: '2-digit' ,
+                                                year: 'numeric' }) %>
+                                </td>
+                                <td>
+                                    <%= cart.product_data.name %>
+                                </td>
+                                <td>
+                                    <p>
+                                        <%= cart.product_data.description.substring(0, 50) %>
+                                            <span id="dots-<%= cart.product_id %>"></span>
+                                            <span id="more-<%= cart.product_id %>" style="display: none;">
+                                                <%= cart.product_data.description.substring(50) %>
+                                            </span>
+                                            <button onclick="showFullDescription('<%= cart.product_id %>')"
+                                                id="myBtn-<%= cart.product_id %>">...</button>
+                                    </p>
+                                </td>
+                                <td>
+                                    <%= cart.product_data.price %>
+                                </td>
+                                <td>
+                                    <%= cart.product_data.category_name %>
+                                </td>
+                                <td>
+                                    <%= cart.product_data.size_name %>
+                                </td>
+                                <td>
+                                    <%= cart.product_data.color_name %>
+                                </td>
+                                <td>
+                                    <img src="<%= cart.product_data.image[0] %>" alt="Product Image"
+                                        class="img-fluid rounded" style="width: 200px; height: 100px;">
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    <!-- Thêm JavaScript Bootstrap -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        function showFullDescription(id) {
+            var dots = document.getElementById("dots-" + id);
+            var moreText = document.getElementById("more-" + id);
+            var btnText = document.getElementById("myBtn-" + id);
+
+            if (dots.style.display === "none") {
+                dots.style.display = "inline";
+                btnText.innerHTML = "...";
+                moreText.style.display = "none";
+            } else {
+                dots.style.display = "none";
+                btnText.innerHTML = "Thu gọn";
+                moreText.style.display = "inline";
+            }
+        }
+    </script>
+
+
+    <%- include('../inc/bottom') %>

@@ -1,0 +1,21 @@
+<%- include('../inc/top') %>
+
+
+    <!-- Hiển thị tin nhắn -->
+    <div>
+        <% messages.forEach(message=> { %>
+            <p>
+                <%= message.sender.username %>: <%= message.text %>
+            </p>
+            <% }); %>
+    </div>
+
+    <!-- Form để gửi tin nhắn mới -->
+    <form action="/chat/<%= conversationId %>" method="post">
+        <input type="text" name="text" placeholder="Nhập tin nhắn...">
+        <button type="submit">Gửi</button>
+    </form>
+
+
+
+    <%- include('../inc/bottom') %>
