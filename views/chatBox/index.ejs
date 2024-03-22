@@ -131,22 +131,10 @@
                 class="scrollbar scrollbar-primary rounded-messages">
                 <!-- Hiển thị tin nhắn ở đây -->
                 <div class="message">
-                    <p>Duy đẹp trai thế ❤️</p>
-                    <span>00:30 - 06/04/2003</span>
+                    <p>CSKH</p>
+                    <span>--</span>
                 </div>
 
-                <div class="message message-right">
-                    <p>Đương nhiên rồi 🥰</p>
-                    <span>06:04 - 23/89/69</span>
-                </div>
-                <div class="message">
-                    <p>Chỉ cách với 👨‍🦯</p>
-                    <span>23:89 - 06/04/2003</span>
-                </div>
-                <div class="message message-right">
-                    <p>Hãy mua quần áo ở Adadas để đẹp trai 😘</p>
-                    <span>06:04 - 23/89/69</span>
-                </div>
 
             </div>
             <!--  -->
@@ -172,9 +160,7 @@
         let currentSocket = null;
         let currentUser = null;
         var messages = [];
-        var BASE_API = 'https://adadas.onrender.com';
-        // var BASE_API = 'https://adadas.onrender.com';
-
+        var BASE_API = 'http://localhost:3000';
         const idSender = document.getElementById('idsender').getAttribute('content');
         console.log("người gửi", idSender);
 
@@ -363,7 +349,7 @@
 
 
                 try {
-                    const response = await fetch('https://adadas.onrender.com/api/message', {
+                    const response = await fetch('http://localhost:3000/api/message', {
                         method: 'POST',
                         body: formData,
                     });
