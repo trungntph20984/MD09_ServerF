@@ -338,17 +338,31 @@ exports.getBillById = async (req, res, next) => {
 
     try {
         var idBill = req.params.idBill;
-        var objBill = await md.billModel.findById(idBill);
+        var objBill = await md.billModel.findById(idBill)
+            .populate("user_id")
+
+            .populate({
+                path: 'cart_id',
+                populate: {
+                    path: 'product_id',
+                    model: 'product_size_color_Model',
+                    populate: [
+                        { path: 'product_id' },
+                        { path: 'size_id' },
+                        { path: 'color_id' }
+                    ]
+                },
+
+            })
 
         if (objBill) {
-            err = false;
+            objReturn.data = objBill;
+
         }
     } catch (error) {
         console.log("không lấy được bill");
     }
 
-    res.status(200).json({
-        err: err,
-        objBill: objBill
-    });
+    res.json(objReturn);
+
 }
