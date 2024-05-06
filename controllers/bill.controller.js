@@ -224,7 +224,7 @@ exports.loc = async (req, res, next) => {
             formData.append('status', '2');
             formData.append('inputImage', '');
 
-            fetch('https://adadas.onrender.com/notification', {
+            fetch('http://localhost:3000/notification', {
                 method: 'POST',
                 body: formData
             })
