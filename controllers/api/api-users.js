@@ -514,7 +514,7 @@ exports.addUser = async (req, res, next) => {
                             const newMessage = new mdMessage.MessageModel({
                                 conversationId: newConversation._id,
                                 sender: idadmin,
-                                text: "Adadss xin chào, adadss có thể giúp gì cho bạn",
+                                text: "cskh xin chào, tôi có thể giúp gì cho bạn",
                                 createdAt: date
 
 
