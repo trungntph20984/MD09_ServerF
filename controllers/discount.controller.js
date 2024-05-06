@@ -10,7 +10,7 @@ const getAllDiscount = async (req, res) => {
     const lengthUser = listUser.length;
     // console.log('litsDiscountlitsDiscount', litsDiscount);
     res.render('discount/list', {
-        title: "ADADAS",
+        title: "MD09",
         heading: "Danh sách Voucher",
         message: "",
         listUser: listUser,
