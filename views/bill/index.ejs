@@ -68,30 +68,57 @@
 
 
 
-          <div class="form-row">
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-              <span class="btn btn-danger btn-lg" style="padding: 20px 20px; ">Số lượng sản hóa đơn: <%= tong_so_hoa_don
-                  %></span>
+          <div class="container">
+            <div class="row justify-content-center align-items-center mt-4">
+              <div class="col-md-4 mb-4">
+                <div class="card bg-secondary text-white text-center p-4">
+                  <h5 class="card-title">Số lượng sản phẩm</h5>
+                  <p class="card-text display-4">
+                    <%= tong_so_hoa_don %>
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <div class="card bg-secondary text-white text-center p-4">
+                  <h5 class="card-title">Tổng tiền</h5>
+                  <p class="card-text display-4">
+                    <%= tong_tien.toLocaleString('vi-VN') %> VNĐ
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <div class="card bg-secondary text-white text-center p-4">
+                  <h5 class="card-title">Tỉ lệ thanh toán</h5>
+                  <p class="card-text display-4">
+                    <%= ti_le_thanh_toan %> %
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-              <span class="btn btn-warning btn-lg" style="padding: 20px 20px; ">Phương thức COD: <%=
-                  tong_so_hoa_don_payments_1 %> VNP: <%= tong_so_hoa_don_payments_2 %></span>
-            </div>
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-              <span class="btn btn-secondary btn-lg" style="padding: 20px 20px; ">Tỉ lệ thanh toán <%= ti_le_thanh_toan
-                  %> %
-              </span>
-            </div>
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-              <span class="btn btn-primary btn-lg" style="padding: 20px 20px; ">Tổng tiền: <%=
-                  tong_tien.toLocaleString('vi-VN') %> VNĐ</span>
-            </div>
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-              <span class="btn btn-success btn-lg" style="padding: 20px 20px; ">Đã thanh toán: <%=
-                  tong_tien_da_thanh_toan.toLocaleString('vi-VN') %> VNĐ
-              </span>
+            <div class="row justify-content-center align-items-center mt-4">
+
+              <div class="col-md-6 mb-4">
+                <div class="card bg-secondary text-white text-center p-4">
+                  <h5 class="card-title">Phương thức thanh toán</h5>
+                  <p class="card-text display-4">COD: <%= tong_so_hoa_don_payments_1 %> VNP: <%=
+                        tong_so_hoa_don_payments_2 %>
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-4">
+                <div class="card bg-secondary text-white text-center p-4">
+                  <h5 class="card-title">Đã thanh toán</h5>
+                  <p class="card-text display-4">
+                    <%= tong_tien_da_thanh_toan.toLocaleString('vi-VN') %> VNĐ
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
 
 
 
@@ -192,7 +219,7 @@
 
 
           <!-- Bảng dữ liệu -->
-          <table class="table table-hover table-success ">
+          <table class="table table-hover table-secondary table-bordered ">
             <thead>
               <tr>
                 <th>Mã đơn</th>
@@ -355,13 +382,14 @@
                   <!-- deital  -->
 
                   <td>
-                    <a href="/bill/detail/<%= bill._id %>" class="btn btn-success btn-md" style="padding: 10px 20px; ">
+                    <a href="/bill/detail/<%= bill._id %>" class="btn btn-secondary btn-md" style="padding: 10px 20px; ">
                       Details</a>
                   </td>
                 </tr>
 
                 <% }); %>
             </tbody>
+            
             <nav aria-label="Page navigation">
               <ul class="pagination">
                 <% if (currentPage> 1) { %>
