@@ -9,7 +9,7 @@ console.log("listtBanner",listtBanner);
     const listProduct = await mdProduct_.productModel.find();
     
     res.render('banner/list', {
-        title: "ADADAS",
+        title: "MD09",
         heading: "Danh sách Banner",
         message: "",
         listProduct: listProduct,
