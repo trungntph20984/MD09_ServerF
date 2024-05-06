@@ -13,7 +13,7 @@ const getListAll_deltail = async (req, res) => {
             .populate('product_id', "name price discount description")
             .populate('size_id', "name")
             .populate('color_id', "name");
-        const deeplink = "https://adadas.onrender.com/"+id_product
+        const deeplink = "http://localhost:3000/"+id_product
 
         // Sắp xếp kích cỡ theo thứ tự "S M L XL XXL"
         productListSize.sort((a, b) => {
